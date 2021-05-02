@@ -1,0 +1,930 @@
+\documentclass[12pt]{article}
+
+
+\usepackage{booktabs, multirow} % for borders and merged ranges
+\usepackage{soul}% for underlines
+\usepackage[table]{xcolor} % for cell colors
+\usepackage{changepage,threeparttable}
+
+
+\usepackage[official]{eurosym}
+
+
+\usepackage{color}
+% \usepackage[usenames,dvipsnames]{xcolor}
+
+
+\newcommand{\hlc}[2][yellow]{ {\sethlcolor{#1} \hl{#2}} }
+
+\usepackage{commath}
+
+\usepackage[utf8]{inputenc}
+\newtheorem{regla}{Regla}
+
+\usepackage[spanish,es-tabla]{babel}
+
+\usepackage{amsmath, amssymb, amsfonts}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\usepackage{tikz, pgfplots}
+\pgfplotsset{compat=1.5}
+
+
+\usepackage{hyperref}
+
+
+\definecolor{ForestGreen}{RGB}{0,155,85}
+\definecolor{RoyalBlue}{RGB}{0,113,188}
+
+
+
+% \newcommand{\hlc}[2][yellow]{ {\sethlcolor{#1} \hl{#2}} }
+
+
+\title{Optimización Comercial}
+\author{Marco Aias et al.}
+\date{\today}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+\section{A realizar}
+
+Sea una cierta compañía de trenes de alta velocidad; la cual ofrece servicios de transporte entre distintas ciudades españolas, desde y hacia Madrid.\\
+
+Sea el trayecto que nos compete Madrid-Bilbao, hemos de determinar la mejor manera de comercializar los asientos de tal tren según los distintos productos ofrecidos.\\
+
+Consiste en determinar la cantidad de asientos esperados a ser vendidos para cada producto, con tal de que el total vendido sea óptimo. \\
+
+Para tal se empleará un modelo de manejo de ingresos; ámpliamente usado, el algoritmo heurístico EMSR-b (Expected Marginal Seat Revenue).\\
+
+Con tal información de demanda esperada para cada producto, se ha de determinar el número de vagones a configurar para el tren, atendiendo a las tasas implicadas.
+
+
+\section{Productos}
+
+
+
+\begin{adjustwidth}{-2.5 cm}{-2.5 cm}\centering
+\begin{threeparttable}[!htb]
+
+\small
+\begin{tabular}{lccccc}\toprule
+Clase de reserva &Tarifa [\euro] &Cambios permitidos &Sala Vip &Fast Track &Elección asiento \\\midrule
+A &180 &Sí &Sí &Sí &Sí \\
+B &130 &Solo 1 (penalización 25 \euro) &No &Sí &Sí \\
+C &100 &Solo 1 (penalización 60 \euro) &No &No &Sí \\
+D &80 &No &No &No &No \\
+E &40 &No &No &No &No \\
+\bottomrule
+\end{tabular}
+\caption{Servicios y precio de cada clase.}\label{tab:clases}
+\end{threeparttable}
+
+\end{adjustwidth}
+
+
+\section{Demanda}
+
+Un departamento de \emph{forecasting} ha proyectado para un día en concreto la demanda esperada para cada producto. Ésta viene recogida en la tabla \ref{tab:demanda}.\\
+
+Se asume que la demanda para cada clase es independiente del resto; se asume la llegada de los clientes según la tarifa: primero se venden los asientos de la clase E, antes de ser vendidos aquellos con una tarifa más elevada.
+
+
+
+\begin{table}[!htp]\centering
+
+%\small
+\begin{tabular}{lrrr}\toprule
+Clase de reserva &$\mu$ &$\sigma$ \\\midrule
+A &\hl{ ? } &\hl{ ? } \\
+B &87 &8 \\
+C &89 &9 \\
+D &\hl{ ? } &\hl{ ? } \\
+E &60 &9 \\
+\bottomrule
+\end{tabular}
+
+\caption{Proyección de demanda para cada clase. (Trayecto MAD - BIO)}\label{tab:demanda}
+\end{table}
+
+
+
+
+
+\begin{align}
+\sigma_1 &= e^{\mu / 7} + 2\label{eq:expbio}\\[8px]
+\sigma_2 &= \dfrac{1}{10}\mu^{3} -20\mu + 20\label{eq:cubbio}
+\end{align}
+
+\vspace{10pt}
+
+La tabla \ref{tab:demanda} y las ecuaciones \eqref{eq:expbio} y \eqref{eq:cubbio} corresponden al trayecto MAD - BIO; las ecuaciones aplican a las clases A y D.
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title=Curvas de demanda,
+xlabel={$\mu$},
+ylabel={$\sigma$},
+ymax=20,
+ymin=5,
+xmax=20,
+xmin=5,
+%domain=5:35,
+samples=200,
+width=12cm, height=4cm,
+legend pos=north west,
+]
+
+
+
+
+
+
+\addplot [red, thick,domain=5:35, restrict y to domain=1:30] {exp(x/7)+2};
+\addlegendentry{$e^{\mu / 7} + 2$}
+
+\addplot [blue, thick,domain=5:35, restrict y to domain=-90:120] {0.1*x^3 - 20*x + 20};
+\addlegendentry{$0.1\mu^{3} -20\mu + 20$}
+
+
+
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{Representación de las ecuaciones \eqref{eq:expbio} y \eqref{eq:cubbio}}\label{fig:curvas}
+\end{figure}
+
+
+Sea el espacio de la solución:
+$$\left\{5 \leq \mu \leq 35\right\}, \left\{1 \leq \sigma \leq 30\right\}$$
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title=Solución,
+axis lines = middle,
+xlabel={$\mu$},
+ylabel={$\sigma_1 - \sigma_2$},
+ymax=100,
+ymin=-100,
+%xmax=20,
+%xmin=5,
+domain=3:20,
+samples=200,
+width=12cm, height=4cm,
+]
+
+\addplot [cyan, thick] {exp(x/7)+2 - 0.1*x^3 + 20*x - 20};
+
+
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{Ecuación \eqref{eq:expbio} - \eqref{eq:cubbio}}\label{fig:sol}
+\end{figure}
+
+
+
+
+Según las figuras \ref{fig:curvas} y \ref{fig:sol}, la solución se encuentra en un entorno alrededor de $\mu \approx 14$.
+
+
+
+
+
+
+
+
+
+\section{Probabilidad EMSR}
+
+
+Para el cálculo de los EMSR(s), se requiere conocer la probabilidad de demanda; para lo cual el modelo toma los datos de demanda proyectados en la tabla \ref{tab:demanda} y forma una distribución normal de probabilidades.\\
+
+
+La distribución gaussiana:
+
+\begin{align}
+f(x) &= \dfrac{1}{\sigma\sqrt{2\pi}}\exp\left({-\,\dfrac{1}{2}\left(\dfrac{x-\mu}{\sigma}\right)^2}\right) \label{eq:fgauss} \\[8pt]
+P(t) &= \int_{-\infty}^{t} f(x) \dif x \underset{t\to +\infty}{=} 1 \label{eq:intgauss}
+\end{align}
+
+
+La integral \eqref{eq:intgauss} no se puede resolver de forma analítica, sino por aproximación por el \emph{método del trapecio} y también por el método de Simpson.\\
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title = Campana de Gauss,
+axis lines = middle,
+xlabel={$x$},
+ylabel={$f(x)$},
+ymax=0.5,
+%ymin=5,
+xmax=3,
+xmin=-3,
+%domain=3:20,
+samples=200,
+width=12cm,height=4cm,
+]
+
+\addplot [magenta, thick] {exp(-0.5*x^2)/(2*3.141592)^0.5};
+
+
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{Ecuación $\underset{\mu = 0,\,\sigma = 1}{\text{\eqref{eq:fgauss}}}$}\label{fig:campana}
+\end{figure}
+
+
+
+Dado que la función \eqref{eq:fgauss} es simétrica, la integral $\underset{t = \mu}{\text{\eqref{eq:intgauss}}}$ es igual a $\frac{1}{2}$. Entonces no es necesario calcular entre $(-\infty, t)$, sino $\frac{1}{2} + \int_\mu^t f(x)\dif x$ lo que alivia muchos recursos computacionales.
+
+\begin{align}
+P(t) = \dfrac{1}{2} + \int_\mu^t \underset{(\mu, \, \sigma)}{f(x)}\dif x \label{eq:probgauss}
+\end{align}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title=Probabilidad acumulada,
+axis lines = middle,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$t$},
+ylabel={$\underset{(\mu,\, \sigma)}{P(t)}$},
+ymax=1.1,
+%ymin=5,
+xmax=3,
+xmin=-3,
+%domain=3:20,
+%samples=200,
+width=12cm,height=4cm,
+legend pos=south east,
+]
+
+\addplot [cyan, thick] table {data/data1.dat};
+\addlegendentry{$(0,1)$}
+\addplot [magenta, thick] table {data/data2.dat};
+\addlegendentry{$(0,0.5)$}
+\addplot [blue, thick] table {data/data3.dat};
+\addlegendentry{$(1,1)$}
+\addplot [red, thick] table {data/data4.dat};
+\addlegendentry{$(-2,0.3)$}
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{Probabilidad acumulada en función de $t$ y $(\mu , \, \sigma)$ \eqref{eq:probgauss}}\label{fig:cdf}
+\end{figure}
+
+
+
+\section{Algoritmo EMSR-b}
+
+Consiste en proteger suficientes \emph{asientos} de respectivas clases con tal de maximizar el ingreso total.\\
+
+Se basa en la \emph{Regla de Littlewood}:
+
+\begin{regla}
+La razón entre las tarifas de respectivas clases ha de ser igual a la probabilidad de ser ocupado el asiento de la clase de la tarifa superior
+\end{regla}
+
+
+Ha de encontrarse el número de asientos protegidos ($t$) que satisfaga la probabilidad ($P(t)$) \eqref{eq:probgauss} de ser ocupados requerida por la razón de las respectivas tarifas.\\
+
+Ampliamos la tabla \ref{tab:demanda} para calcular los parámetros relativos a los EMSR(s):\\
+
+
+
+
+
+\begin{adjustwidth}{-2.5 cm}{-2.5 cm}\centering
+\begin{threeparttable}[!htb]
+
+%\small
+\begin{tabular}{lrcccccr}\toprule
+Clase$_i$ & Tarifa$_i$ & $\mu_i$ &$\sigma_i$ & $\text{tmp}_i$ & $\overline{\mu}_i$ & $\overline{\sigma}_i$ & Protección\\\midrule
+A$_1$ & 180 & \hl{ ? } &\hl{ ? } & & & & \\
+B$_2$ & 130 & 87 &8 & & & & \\
+C$_3$ & 100 & 89 &9 & & & & \\
+D$_4$ & 80 & \hl{ ? } &\hl{ ? } & & & & \\
+E$_5$ & 40 & 60 &9 & - & - & - & -\\
+\bottomrule
+\end{tabular}
+
+\caption{Valores EMSR-b}\label{tab:emsr}
+\end{threeparttable}
+
+\end{adjustwidth}
+
+
+Según el algoritmo EMSR-b se comparan las clases en orden ascendente de precio. Se aplica la regla de Littlewood entre una clase y el resto cuál sea de mayor tarifa.
+i.e. la clase E ($i = 5$) se compara con el conjunto de las clases A, B, C y D; la clase C ($i = 3$) se compara con A y B etc.\\
+
+
+Entonces se obtiene la tarifa media ponderada de un conjunto de clases como:
+
+\begin{align}
+\text{Tarifa media ponderada}_i \equiv \text{tmp}_i = \dfrac{\sum_{k=1}^{i} \text{tarifa}_k \cdot \mu_k}{\sum_{k=1}^{i} \mu_k}
+\end{align}
+
+Para el conjunto de demanda se agregan las demandas:
+
+\begin{align}
+\overline{\mu}_i = \sum_{k=1}^{i} \mu_k
+\end{align}
+
+Para la desviación conjunta se toma la raíz cuadrada del sumatorio de las varianzas:
+
+\begin{align}
+\overline{\sigma}_i = \sqrt{\sum_{k=1}^i \sigma_k^2}
+\end{align}
+
+
+Dados estos parámetros conjuntos, se procede a aplicar la regla de Littlewood entre cada clase y el conjunto restante.
+
+\begin{align}
+\dfrac{\text{tarifa}_{i + 1}}{\text{tmp}_i} =  \underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{P(x > \theta_i)}
+\end{align}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title=Complementario,
+axis lines = middle,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$t$},
+ylabel=$1 - ${$\underset{(\mu_i,\, \sigma_i)}{ P(t)}$},
+ymax=1.1,
+%ymin=5,
+xmax=3,
+xmin=-3,
+%domain=3:20,
+%samples=200,
+width=12cm,height=4cm,
+legend pos=north east,
+]
+
+
+\addplot [red, thick] table {data/data5.dat};
+\addlegendentry{$(0,1)$}
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{Complementario de CDF}\label{fig:comcdf}
+\end{figure}
+
+Ha de encontrarse un valor $\theta_i$ para cada conjunto de clase, que representa el número de asientos protegidos, para el cuál la probabilidad de que tantos sean ocupados sea igual a la razón de tarifas.
+
+\begin{align}
+g(\theta) = \dfrac{1}{2} - \int_{\mu_i}^{\theta} \underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{f(x)}\dif x - \dfrac{\text{tarifa}_{i + 1}}{\text{tmp}_i}  = 0 \label{eq:gtheta}
+\end{align}
+
+Se puede resolver por linealización, i.e. Newton.\\
+
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+title=Linealización,
+axis lines = center,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$1 - ${$\underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{ P(\theta)}$},
+ymax=1.1,
+%ymin=5,
+xmax=3,
+xmin=-3,
+ticks=none,
+%domain=3:20,
+%samples=200,
+width=12cm,height=6cm,
+legend pos=north east,
+]
+
+
+\addplot [red, thick] table {data/data5.dat};
+\addlegendentry{$(\overline{\mu}_i, \, \overline{\sigma}_i)$}
+
+\addplot [blue, thick] {0.2};
+\addlegendentry{$y=\text{tarifa}_{i+1}/\text{tmp}_i$}
+\addplot [] {-0.399*(x-0)+0.5};
+\addlegendentry{$\left(1-P(\theta)\right)\mathcal{O}(\theta^1)$}
+\end{axis}
+
+\end{tikzpicture}
+\caption{Resolución de \eqref{eq:gtheta}}\label{fig:gtheta}
+\end{figure}
+
+
+
+
+Se resuelve para todos los valores EMSR y completa la tabla \ref{tab:emsr}.
+
+
+
+
+
+
+\subsection{Valores preliminares}
+
+
+\begin{adjustwidth}{-2.5 cm}{-2.5 cm}\centering
+\begin{threeparttable}[!htb]
+
+%\small
+\begin{tabular}{lrcccccr}\toprule
+Clase$_i$ & Tarifa$_i$ & $\mu_i$ &$\sigma_i$ & $\text{tmp}_i$ & $\overline{\mu}_i$ & $\overline{\sigma}_i$ & Protección\\\midrule
+A$_1$ & 180 & \hl{ 14 } &\hl{ 9 } & 180 & 14 & 9 & 9 \\
+B$_2$ & 130 & 87 & 8 & 137 & 101 & 12 & 94 \\
+C$_3$ & 100 & 89 & 9 & 120 & 190 & 15 & 183 \\
+D$_4$ & 80 & \hl{ 14 } &\hl{ 9 } & 117 & 204 & 18 & 211 \\
+E$_5$ & 40 & 60 &9 & \hlc[cyan]{ (99) }   & \hlc[cyan]{ (264) } & \hlc[cyan]{ (20) } & \hlc[cyan]{ (289)* }\\
+\bottomrule
+\end{tabular}
+
+\caption{Valores EMSR-b preliminares}\label{tab:emsrpre}
+\end{threeparttable}
+
+\end{adjustwidth}
+
+
+
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = left,
+axis y line*=left,
+axis x line*=bottom,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$f(\theta)_i$,
+ymax=0.048,
+ymin=0,
+xmax=350,
+xmin=0,
+% ticks=none,
+xtick={9,94,183,211,289},
+    xticklabels={A, B, C, D, E*},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+]
+
+
+\addplot[blue, thick] table{data/data6.dat};
+\addplot[cyan, thick] table{data/data7.dat};
+\addplot[magenta, thick] table{data/data8.dat};
+\addplot[teal, thick] table{data/data9.dat};
+\addplot[red, thick] table{data/data10.dat};
+
+\addplot[dashed,thin, red] coordinates {(9,0) (9,1)};
+\addplot[dashed,thin, red] coordinates {(94,0) (94,1)};
+\addplot[dashed,thin, red] coordinates {(183,0) (183,1)};
+\addplot[dashed,thin, red] coordinates {(211,0) (211,1)};
+\addplot[dashed,thin, red] coordinates {(289,0) (289,1)};
+
+
+\end{axis}
+
+
+\begin{axis} [
+% axis lines = left,
+axis y line*=right,
+axis x line*=top,
+legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+ylabel=tarifa$_i$,
+% ymax=0.048,
+ymin=0,
+xmax=350,
+xmin=0,
+% ticks=none,
+xtick={},
+    xticklabels={},
+% domain=0:400,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+grid=none,
+]
+
+\addplot [dashed, blue, thin, domain=9:400] {180};
+\addplot [dashed, blue, thin, domain=94:400]  {130};
+\addplot [dashed, blue, thin, domain=183:400]  {100};
+\addplot [dashed, blue, thin, domain=211:400]  {80};
+\addplot [dashed, blue, thin, domain=287:400]  {40};
+
+
+
+\end{axis}
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{Distribuciones}\label{fig:tablaf}
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+axis lines = middle,
+axis y line*=left,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$g(\theta)_i$,
+ymax=1,
+%ymin=5,
+xmax=350,
+xmin=-14,
+% ticks=none,
+xtick={9,94,183,211,289},
+    xticklabels={A, B, C, D, E*},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+]
+
+
+\addplot[blue, thick] table{data/data11.dat};
+\addplot[cyan, thick] table{data/data12.dat};
+\addplot[magenta, thick] table{data/data13.dat};
+\addplot[teal, thick] table{data/data14.dat};
+\addplot[red, thick] table{data/data15.dat};
+
+
+\end{axis}
+\end{tikzpicture}
+  }
+
+
+\caption{Distribuciones}\label{fig:tablag}
+\end{figure}
+
+
+
+\section{Vagones}
+
+Han de determinarse el número óptimo de vagones a llevar. Sea entre un mínimo de 2 vagones, a un máximo de 4 vagones, configurados en la clase turista, con 80 plazas cada vagón.\\
+
+
+Las tasas relativas al número de vagones y al número de pasajeros se recojen en la tabla \ref{tab:vag}.
+
+
+
+
+\begin{table}[!htp]\centering
+
+%\small
+\begin{tabular}{lc}\toprule
+Concepto & Tasa [\euro] \\\midrule
+Tasa por pasajero & $1.5$\\
+Coste por vagón & $500$\\
+\bottomrule
+\end{tabular}
+
+\caption{Conceptos relativos a vagones y pasajeros}\label{tab:vag}
+\end{table}
+
+
+Sea la manera en la que se llenen los vagones, desde la clase más alta a la más baja, tal que no afecta a la demanda esperada ni a los niveles de protección.\\
+
+Se define una función de coste y beneficio, $\gamma(\theta)$, la cuál recoge el beneficio neto en función del número de pasajeros $\theta$ y conversamente, del número de vagones aplicando las tasas asociadas.\\
+
+
+Para cada valor de $\theta$ se atribuye un incremento de beneficio relativo al tipo de intervalo en el que se encuentra. Véase la figura \ref{fig:ingresos} y la tabla \ref{tab:emsrpre}. i.e. si $0 < \theta < A$ el beneficio a sumar por 1 pasajero extra corresponde a la tarifa A (180), menos la tasa de pasajeros. En total, para cada vagón se añade su tasa.
+
+
+\begin{align}
+\gamma(\theta) = \sum_{k=1}^\theta \underset{\left\{\min(i) \, \mid \, k \, < \, \theta_i^*\right \}}{\text{Tarifa}_i} - \left(\left\lceil\dfrac{\theta}{n_{\text{plazas}}}\right\rceil  \frac{\text{Coste}}{\text{vagón}} + \theta\frac{\text{Tasa}}{\text{pasajero}} \right) \label{eq:delta}
+\end{align}
+
+\begin{align}
+\delta(\theta) = \sum_{k = 1}^\theta \underset{\left\{\min(i) \, \mid \, k \, < \, \theta_i^*\right \}}{\left[\left(\text{Tarifa}_i -\frac{\text{Tasa}}{\text{pasajero}}\right)\left(1 - \underset{(\overline{\mu}_i, \, \sigma_i)}{P(\theta)}\right)\right]} - \left\lceil\dfrac{\theta}{n_{\text{plazas}}}\right\rceil \frac{\text{Coste}}{\text{vagón}} \label{eq:deltastar}
+\end{align}
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = middle,
+% axis y line*=left,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$\gamma(\theta)$,
+% ymax=0.048,
+%ymin=5,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={9,94,183,211,289, 80, 160, 240,320},
+    xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north west,
+]
+
+
+
+
+\addplot [blue, ultra thick] table{data/vagones0.dat};
+\addlegendentry{$(1.5, 500)$}
+\addplot [teal, thick] table{data/vagones1.dat};
+\addlegendentry{$(1.5, 2000)$}
+\addplot [olive, thick] table{data/vagones2.dat};
+\addlegendentry{$(55, 500)$}
+\addplot [purple, thick] table{data/vagones3.dat};
+\addlegendentry{$(1.5, 5000)$}
+\addplot [violet, thick] table{data/vagones4.dat};
+\addlegendentry{$(0, 0)$}
+
+
+\addplot[dashed,thin, red] coordinates {(9,0) (9,25000)};
+\addplot[dashed,thin, red] coordinates {(94,0) (94,25000)};
+\addplot[dashed,thin, red] coordinates {(183,0) (183,25000)};
+\addplot[dashed,thin, red] coordinates {(211,0) (211,25000)};
+\addplot[dashed,thin, red] coordinates {(289,0) (289,25000)};
+\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+
+\end{axis}
+
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{Distribución de ingresos en función del número de pasajeros y para distintas tasas}\label{fig:ingresos}
+\end{figure}
+
+
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = left,
+axis y line*=left,
+axis x line*=bottom,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$\gamma(\theta)^{**}$,
+% ymax=0.048,
+% ymin=12000,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={9,94,183,211,289, 80, 160, 240,320},
+    xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=south west,
+]
+
+\addplot [blue, ultra thick, dashdotted] table{data/vagones0.dat};
+
+\addplot [violet, ultra thick] table{data/vprob2.dat};
+
+
+\addplot [RoyalBlue, ultra thick] table{data/vprob4.dat};
+
+\addplot [magenta, densely dashdotted, thick] table{data/vprob5.dat};
+
+
+% \addlegendentry{$(1.5, 500)$}
+
+% \addlegendentry{$(1.5, 500)$}
+
+
+
+
+\addplot[dashed, ultra thin, red] coordinates {(9,0) (9,25000)};
+\addplot[dashed, ultra thin, red] coordinates {(94,0) (94,25000)};
+\addplot[dashed, ultra thin, red] coordinates {(183,0) (183,25000)};
+\addplot[dashed, ultra thin, red] coordinates {(211,0) (211,25000)};
+\addplot[dashed, ultra thin, red] coordinates {(289,0) (289,25000)};
+\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+
+\end{axis}
+
+
+\begin{axis} [
+% axis lines = left,
+axis y line*=right,
+axis x line*=top,
+legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+ylabel=$1 - P(\theta)$,
+% ymax=1.19,
+% ymin=0,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={},
+    xticklabels={},
+% domain=0:400,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+grid=none,
+]
+\addplot [red, ultra thick, domain=0:200] {1};
+\addplot [red, ultra thick] table{data/vprob0.dat};
+% \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
+
+\addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
+
+\addplot [ForestGreen, densely dashdotted, ultra thick] table{data/vprob6.dat};
+
+
+
+\end{axis}
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{$\delta(\theta)$, según distintas funciones de probabilidad de demanda}\label{fig:distvag}
+\end{figure}
+
+
+
+
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = middle,
+axis y line*=left,
+axis x line*=bottom,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$\delta(\theta)$,
+% ymax=0.048,
+%ymin=5,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={9,94,183,211,289, 80, 160, 240,320},
+    xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=south west,
+]
+
+
+
+
+\addplot [blue, ultra thick] table{data/vprob5.dat};
+\addlegendentry{$(1.5, 500)$}
+\addplot [teal, thick] table{data/delta1.dat};
+\addlegendentry{$(1.5, 2000)$}
+\addplot [olive, thick] table{data/delta2.dat};
+\addlegendentry{$(55, 500)$}
+\addplot [purple, thick] table{data/delta3.dat};
+\addlegendentry{$(1.5, 5000)$}
+\addplot [violet, thick] table{data/delta4.dat};
+\addlegendentry{$(0, 0)$}
+
+
+\addplot[dashed,thin, red] coordinates {(9,0) (9,25000)};
+\addplot[dashed,thin, red] coordinates {(94,0) (94,25000)};
+\addplot[dashed,thin, red] coordinates {(183,0) (183,25000)};
+\addplot[dashed,thin, red] coordinates {(211,0) (211,25000)};
+\addplot[dashed,thin, red] coordinates {(289,0) (289,25000)};
+\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+
+\end{axis}
+
+\begin{axis} [
+% axis lines = left,
+axis y line*=right,
+axis x line*=top,
+legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+ylabel=$1 - P(\theta)$,
+% ymax=1.19,
+% ymin=0,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={},
+    xticklabels={},
+% domain=0:400,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+grid=none,
+]
+\addplot [red, ultra thick, domain=0:200] {1};
+\addplot [red, ultra thick] table{data/vprob0.dat};
+% \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
+
+% \addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
+
+\addplot [ForestGreen, densely dashdotted, ultra thick] table{data/vprob6.dat};
+
+
+
+\end{axis}
+
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{$\delta(\theta)$ según distintas tasas}\label{fig:deltas}
+\end{figure}
+
+
+
+Similar a la distribución de ingresos según \eqref{eq:delta}, se pueden designar variaciones, como $\delta(\theta)$ \eqref{eq:deltastar}. Varias implementaciones se pueden ver en la figura \nolinebreak \ref{fig:distvag}.\\
+
+La función $\delta(\theta)$ es una medida del ingreso esperado ponderado según la probabilidad para cada asiento. La probabilidad, las tasas, y las tarifas están delimitadas por los niveles de protección y corresponden individualmente a cada clase determinada por estos niveles.\\
+
+Entonces el algoritmo aquí propuesto para determinar el número óptimo de vagones consiste en encontrar un valor máximo para la función $\delta(\theta)$, tal que la probabilidad para que $\theta^*$ asientos sean ocupados o más, sea superior a $0.5$. Véase en la figura \ref{fig:deltas}.
+
+
+\begin{align}
+N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil \, \mid \, \theta^* \, \mid \, \delta(\theta^*) > \delta(\theta) \,\, \& \,\, 1 - \underset{(\overline{\mu}_n , \, \overline{\sigma}_n)}{P(\theta^*)} > \dfrac{1}{2}
+\end{align}
+
+
+
+\end{document}
