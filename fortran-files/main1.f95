@@ -40,6 +40,10 @@ real*8 :: x(m), a(m,m), y(m), errf, errx, eps=1d-3
  if (n .gt. nmax) write(*,'("Se ha excedido el numero maximo de iteraciones")') 
 50 format (i2,4(1x,f18.12)) 
  !------------------------------------------------------------------------------
+ !Cálculo de los EMSRs mediante el metodo EMSR-B:
+ !------------------------------------------------------------------------------
+ !Cálculo del número de vagones que maximiza los beneficios:
+ !------------------------------------------------------------------------------
  
  
 
