@@ -1,19 +1,55 @@
 Module utilidades
 
 contains
+!-------------------------------------------------------------------------------
+!Subrutinas para el cálculo del sistema no lineal:
 
-  subroutine emsr()
+!Norma euclídea:
+  function norma_2(v,n) 
+         implicit none 
+         integer :: n, k 
+         real*8 :: v(n), norma_2, s 
+         s = 0d0 
+         do k = 1, n 
+          s = s + abs(v(k))**2 
+         end do 
+           norma_2 = sqrt(s) 
+  end function 
+  
+!Subrutina de cálculo de valores de las funciones del sistema:
+subroutine f(x,y,m) 
+       implicit none 
+       integer,intent(in) :: m 
+       real*8, intent(inout) :: x(m), y(m) 
+       !Funciones del sistema:
+        y(1) = -(exp(x(1)/7)+2-x(2)) 
+        y(2) = -(0.1*x(1)**3-20*x(1)+20-x(2)) 
+end subroutine 
 
-    ! Cálculo de 350*5 Emsr,s
-
-  end Subroutine
-
-
-
-  subroutine clasificar()
-
-  end subroutine
-
+!Subrutina con la Jacobiana calculada mediante diferencias finitas:
+subroutine jacob_f(x,a,m) 
+       implicit none  
+          integer,intent(in) :: m 
+          real*8,intent(inout) :: x(m), a(m,m) 
+          real*8 :: h=1d-6,z(m),y1(m),y2(m) 
+          ! valor de la función en la iteracción dada 
+          call f(x,y1,m) 
+          ! calculo parciales respecto a x1 
+           z(1)=x(1)+h 
+           z(2)=x(2) 
+           call f(z,y2,m) 
+           a(1,1) = (-y2(1)+y1(1))/h 
+           a(2,1) = (-y2(2)+y1(2))/h 
+          ! calculo parciales respecto a x2 
+           z(1)=x(1) 
+           z(2)=x(2)+h 
+           call f(z,y2,m) 
+           a(1,2) = (-y2(1)+y1(1))/h 
+           a(2,2) = (-y2(2)+y1(2))/h 
+       end subroutine 
+       
+       
+!-------------------------------------------------------------------------------
 
 
   function trapecio(a,b,n,ro,mu)
