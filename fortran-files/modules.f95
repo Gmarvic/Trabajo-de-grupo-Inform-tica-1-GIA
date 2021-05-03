@@ -4,7 +4,7 @@ contains
 !-------------------------------------------------------------------------------
 !Subrutinas para el cálculo del sistema no lineal:
 
-!Norma euclídea:
+!Norma euclídea de un vector de dimensión n:
   function norma_2(v,n) 
          implicit none 
          integer :: n, k 
