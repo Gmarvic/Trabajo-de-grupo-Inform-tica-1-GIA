@@ -48,6 +48,15 @@
 \date{\today}
 
 
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex} %Imports biblatex package
+
+\addbibresource{refs.bib}
+
+
 
 \begin{document}
 \maketitle
@@ -315,7 +324,7 @@ La razón entre las tarifas de respectivas clases ha de ser igual a la probabili
 
 Ha de encontrarse el número de asientos protegidos ($t$) que satisfaga la probabilidad ($P(t)$) \eqref{eq:probgauss} de ser ocupados requerida por la razón de las respectivas tarifas.\\
 
-Ampliamos la tabla \ref{tab:demanda} para calcular los parámetros relativos a los EMSR(s):\\
+Ampliamos la tabla \ref{tab:demanda} para calcular los parámetros relativos a los EMSR(s); \cite{wiki:emsr, yt:emsrb}\\
 
 
 
@@ -922,8 +931,12 @@ Entonces el algoritmo aquí propuesto para determinar el número óptimo de vago
 
 
 \begin{align}
-N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil \, \mid \, \theta^* \, \mid \, \delta(\theta^*) > \delta(\theta) \,\, \& \,\, 1 - \underset{(\overline{\mu}_n , \, \overline{\sigma}_n)}{P(\theta^*)} > \dfrac{1}{2}
+N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil \, \mid \, \theta^* \, \mid \, \max\left(\delta(\theta^*)\right) > \epsilon\left(\delta(\theta)\right) \,\mid \, 1 - \underset{(\overline{\mu}_n , \, \overline{\sigma}_n)}{P(\theta^*)} > \dfrac{1}{2}
 \end{align}
+
+
+
+\printbibliography %Prints bibliography
 
 
 
