@@ -2,59 +2,79 @@ program main
   use lib
   implicit none
 
-  real(8) :: r, a(100), b(100), c(100), d(100), e(100), pasajerostotal(100), t, dinero(100)
-  integer :: i, n
+  real(8) :: tabla(5,6), q(100, 5), pasajerostotal(100), t, dinero(100), tasapax, v(5)
+  integer :: i, n, nvagones, tasavag, nplazas, j, clases, libres, k
   n = 100
+  nplazas = 80
+  clases = 5
+
+  print *, "nvagones?"
+  read *, nvagones
+
+  print *, "tasa pasajero?"
+  read *, tasapax
+
+  print *, "tasa vagon?"
+  read *, tasavag
+
+  t = tasavag/dble(nplazas) - tasapax
+
+  tabla(1,:) = (/dble(180) - t, dble(14), dble(9), dble(0), dble(0), dble(0)/)
+  tabla(2,:) = (/dble(130) - t, dble(87), dble(8), dble(0), dble(0), dble(0)/)
+  tabla(3,:) = (/dble(100) - t, dble(89), dble(9), dble(0), dble(0), dble(0)/)
+  tabla(4,:) = (/dble(80) - t, dble(14), dble(9), dble(0), dble(0), dble(0)/)
+  tabla(5,:) = (/dble(40) - t, dble(60), dble(9), dble(0), dble(0), dble(0)/)
 
 
-  r = 0.3
 
-  call randNormal(dble(60), dble(9), r)
+  call valores_emsr(tabla, 5)
+  call proteger(tabla,5,v)
+  print *, "MATRIZ VALORES EMSR: "
+
+  call show_array(tabla, 5, 6)
+
+  print *, "NIVELES DE PROTECCION"
+
+  do i = 1, 5
+    if (v(i) == 0.d0) v(i) = tabla(i, 5)+tabla(i,6)
+  end do
+  call show_array(v,5, 1)
+
+
+
+
 
 
   ! opening the file for reading
-  open (2, file = 'seedA.dat', status = 'old')
+  open (2, file = 'seed.dat', status = 'old')
   do i = 1,n
-    read(2,*) a(i)
-  end do
-  close(2)
-
-  open (2, file = 'seedB.dat', status = 'old')
-  do i = 1,n
-    read(2,*) b(i)
-  end do
-  close(2)
-
-  open (2, file = 'seedC.dat', status = 'old')
-  do i = 1,n
-    read(2,*) c(i)
-  end do
-  close(2)
-  open (2, file = 'seedD.dat', status = 'old')
-  do i = 1,n
-    read(2,*) d(i)
-  end do
-  close(2)
-  open (2, file = 'seedE.dat', status = 'old')
-  do i = 1,n
-    read(2,*) e(i)
+    do j = 1, clases
+      read(2,*) q(i,j)
+    end do
   end do
   close(2)
 
 
   do i = 1, n
-    call randNormal(dble(14), dble(9), a(i))
-    call randNormal(dble(87), dble(8), b(i))
-    call randNormal(dble(89), dble(9), c(i))
-    call randNormal(dble(14), dble(9), d(i))
-    call randNormal(dble(60), dble(9), e(i))
+    do j = 1, clases
+      call randNormal(tabla(j, 2), tabla(j, 3), q(i,j))
+    end do
+  end do
 
-    pasajerostotal(i) = a(i)+b(i)+c(i)+d(i)+e(i)
+  do i = 1, n
+    t = 0.d0
+    do j = 1, clases
+      t = t + q(i, j)
+    end do
+    pasajerostotal(i) =  t
     ! print *, "Pasajeros en total: ", pasajerostotal(i)
 
-    dinero(i) = a(i)*180 + b(i)*130 + c(i)*100 + d(i)*80 + e(i)*40
-    dinero(i) = dinero(i) - 1.5*pasajerostotal(i) - 500*ceiling(pasajerostotal(i)/dble(80))
-    print *, dinero(i), pasajerostotal(i)
+    t = 0.d0
+    do j = 1, clases
+      t = t + q(i, j)*(tabla(j, 1))
+    end do
+    dinero(i) = t
+    ! print *, dinero(i), pasajerostotal(i)
   end do
 
   t = 0.d0
@@ -71,52 +91,50 @@ program main
   end do
 
   print *, "DINERO DE MEDIA: ", t/dble(n)
+
+
+
 
 
   do i = 1, n
     dinero(i) = 0.d0
-    if (e(i) < 4*80 - 211) then
-      dinero(i) = e(i)*(40 - 1.5)
-    else
-      e(i) = (4*80 - 211)
-      dinero(i) = e(i)*(40 - 1.5)
+    libres = nvagones*nplazas
+    do j = clases-1, 1, -1
+      t = 0.d0
+      do k = j+2, clases
+        t = t + q(i, k)
+      end do
+
+      libres = nvagones*nplazas - v(j) - t
+
+      if (q(i, j+1) > libres) then
+        q(i, j+1) = libres
+        if (libres < 0) q(i, j+1) = 0.d0
+      end if
+
+      dinero(i) = dinero(i) + q(i, j+1)*(tabla(j+1, 1))
+    end do
+
+    t = 0.d0
+    do k = 2, clases
+      t = t + q(i, k)
+    end do
+
+    libres = nvagones*nplazas - t
+
+    if (q(i, 1) > libres) then
+      q(i, 1) = libres
+      if (libres < 0) q(i, 1) = 0.d0
     end if
+    dinero(i) = dinero(i) + q(i, 1)*tabla(1, 1)
 
-    if (d(i) + e(i) < 4*80 - 183) then
-      dinero(i) = dinero(i) + d(i)*(80 - 1.5)
-    else
-      d(i) = (4*80 - e(i) - 183)
-      dinero(i) = dinero(i) + d(i)*(80 - 1.5)
-    end if
+    t = 0.d0
 
-    if (c(i) + d(i) + e(i) < 4*80 - 94) then
-      dinero(i) = dinero(i) + c(i)*(100 - 1.5)
-    else
-      c(i) = (4*80 - e(i) - d(i) - 94)
-      dinero(i) = dinero(i) + c(i)*(100 - 1.5)
-    end if
+    do j = 1, clases
+      t = t + q(i, j)
+    end do
+    pasajerostotal(i) = t
 
-    if (b(i) + c(i) + d(i) + e(i) < 4*80 - 9) then
-      dinero(i) = dinero(i) + b(i)*(130 - 1.5)
-    else
-      b(i) = (4*80 - e(i) - d(i) - c(i) - 9)
-      dinero(i) = dinero(i) + b(i)*(130 - 1.5)
-    end if
-
-
-    if (a(i) + b(i) + c(i) + d(i) + e(i) < 4*80) then
-      dinero(i) = dinero(i) + a(i)*(180 - 1.5)
-    else
-      a(i) = (4*80 - e(i) - d(i) - c(i) - b(i))
-      dinero(i) = dinero(i) + a(i)*(180 - 1.5)
-    end if
-
-    dinero(i) = dinero(i) - 500*4
-
-    pasajerostotal(i) = a(i) + b(i) + c(i) + d(i) + e(i)
-
-    print *, a(i), b(i), c(i), d(i), e(i)
-    print *, dinero(i), pasajerostotal(i)
 
   end do
 
@@ -134,32 +152,15 @@ program main
   end do
   print *, "DINERO DE MEDIA: ", t/dble(n)
 
+  do i = 1, clases
+    t = 0.d0
+    do j = 1, n
+      t = t + q(j, i)
+    end do
+    print *, i, ":", t/dble(n)
+  end do
 
-  t = 0.d0
-  do i = 1, n
-    t = t + a(i)
-  end do
-  print *, "A: ", t/dble(n)
-  t = 0.d0
-  do i = 1, n
-    t = t + b(i)
-  end do
-  print *, "B: ", t/dble(n)
-  t = 0.d0
-  do i = 1, n
-    t = t + c(i)
-  end do
-  print *, "C: ", t/dble(n)
-  t = 0.d0
-  do i = 1, n
-    t = t + d(i)
-  end do
-  print *, "D: ", t/dble(n)
-  t = 0.d0
-  do i = 1, n
-    t = t + e(i)
-  end do
-  print *, "E: ", t/dble(n)
+
 
 
 end program

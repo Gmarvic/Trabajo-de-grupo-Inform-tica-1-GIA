@@ -12,7 +12,7 @@ contains
     integer :: i
 
     do i = 1, m
-      !print *, A(i,:)
+      print *, A(i,:)
     end do
 
   end subroutine
@@ -99,7 +99,9 @@ contains
 
       s = 0.d0
       do k = 1, i
+        ! TODO ingreso en vez de tarifa
         s = s + A(k, 1)*A(k, 2)
+
       end do
 
       A(i,4) = s/A(i,5)
@@ -153,28 +155,31 @@ contains
         dx = -gauss(x, A(i,5), A(i,6))
         x = s/dx + x
       end do
+
+      ! if (v(i) == 0.d0) v(i) = 240
     end do
 
 
     ! Ghost class TODO
-    x = A(filas, 5)
-    do j = 1, 100
-      ! límite superior de probabilidad de ocupar theta asientos (0.1)
-      s = 0.1 - 1 + probabilidad(x, A(filas,5), A(filas,6))
-
-      if (abs(s) < tol) then
-        v(filas) = x
-        !print *, "GHOST CLASS"
-        !print *, filas, v(filas), j
-
-        !print *, 0.1
-        !print *, 1 - probabilidad(v(filas), A(filas,5), A(filas,6))
-        exit
-      end if
-
-      dx = -gauss(x, A(filas,5), A(filas,6))
-      x = s/dx + x
-    end do
+    ! x = A(filas, 5)
+    ! do j = 1, 100
+    !   ! límite superior de probabilidad de ocupar theta asientos (0.1)
+    !   s = 0.1 - 1 + probabilidad(x, A(filas,5), A(filas,6))
+    !
+    !   if (abs(s) < tol) then
+    !     v(filas) = x
+    !     !print *, "GHOST CLASS"
+    !     !print *, filas, v(filas), j
+    !
+    !     !print *, 0.1
+    !     !print *, 1 - probabilidad(v(filas), A(filas,5), A(filas,6))
+    !     exit
+    !   end if
+    !
+    !   dx = -gauss(x, A(filas,5), A(filas,6))
+    !   x = s/dx + x
+    ! end do
+    v(filas) = 0.d0
   end subroutine
 
 
