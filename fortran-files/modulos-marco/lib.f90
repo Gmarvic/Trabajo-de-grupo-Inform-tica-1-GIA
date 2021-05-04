@@ -225,12 +225,38 @@ contains
       !print *, i, s, clase
 
     end do
-
-
-
   end subroutine
 
+  ! devuelve un valor normal, según el promedio, la desviación y el valor aleatorio lineal r, el cuál es devuelto como correspondiente
 
+  subroutine randNormal(mu, sigma, r)
+    implicit none
+    real(8), intent(in) :: mu, sigma
+    real(8), intent(inout) :: r
+
+    integer :: j
+    real(8) :: s, x, tol, dx
+
+    ! se define la tolerancia
+    tol = dble(0.000001)
+    x = mu
+    do j = 1, 50
+      s = r - 1 + probabilidad(x, mu, sigma)
+
+      if (abs(s) < tol) then
+        if (x < 0.d0) then
+          r = 0.d0
+        else
+          r = x
+        end if
+        exit
+      end if
+
+      dx = -gauss(x, mu, sigma)
+      x = s/dx + x
+    end do
+
+  end subroutine
 
 
 

@@ -936,6 +936,25 @@ N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil 
 
 
 
+
+
+\section{Monte Carlo}
+
+Con tal de comprobar el grado de certeza de todos los algoritmos propuestos, en especial los respectivos al cálculo de vagones, se pueden realizar simulaciones para tal efecto.\\
+
+La principal característica de estos métodos de simulación es que parten de la aleatoriedad. Y para tal aleatoriedad se tomarán los datos de la tabla \ref{tab:demanda}.\\
+
+Se trata de cobrar valores aleatorios que se conjuguen con las distribuciones normales descritas en la tabla de demanda.\\
+
+Para ello se partirán de valores aleatorios \emph{lineales}, que pueden ser recuperados de una muestra, y transformarlos en normales según la figura \ref{fig:gtheta}, reemplazando la razón de tarifas por un valor aleatorio $(0,1)$ lineal.\\
+
+Todos estos valores aleatorios corresponden, por supuesto, con el número de pasajeros esperados para cada producto. Se sumarán los totales ingresados para comparación de las predicciones de ingreso.
+
+
+
+
+
+
 \printbibliography %Prints bibliography
 
 
