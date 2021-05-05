@@ -642,7 +642,7 @@ Coste por vagón & $500$\\
 \end{table}
 
 
-Sea la manera en la que se llenen los vagones, desde la clase más alta a la más baja, tal que no afecta a la demanda esperada ni a los niveles de protección.\\
+Sea la manera en la que se llenen los vagones, desde la clase más alta a la más baja, tal que no afecta a la demanda esperada ni a los niveles de protección.\footnote{Como se discute en la sección \emph{Monte Carlo}, estas suposiciones no se corresponden con las designadas por el algoritmo EMSR-b. Consecuentemente, las funciones $\gamma$ y $\delta$ no son óptimas.}\\
 
 Se define una función de coste y beneficio, $\gamma(\theta)$, la cuál recoge el beneficio neto en función del número de pasajeros $\theta$ y conversamente, del número de vagones aplicando las tasas asociadas.\\
 
@@ -942,15 +942,17 @@ N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil 
 
 Con tal de comprobar el grado de certeza de todos los algoritmos propuestos, en especial los respectivos al cálculo de vagones, se pueden realizar simulaciones para tal efecto.\\
 
-La principal característica de estos métodos de simulación es que parten de la aleatoriedad. Y para tal aleatoriedad se tomarán los datos de la tabla \ref{tab:demanda}.\\
+La principal característica de estos métodos de simulación es que parten de la aleatoriedad. Se cobran valores aleatorios que se conjugan con las distribuciones normales descritas en la tabla de demanda \ref{tab:demanda}.\\
 
-Se trata de cobrar valores aleatorios que se conjuguen con las distribuciones normales descritas en la tabla de demanda.\\
+Los valores aleatorios \emph{lineales}, se recuperan de una muestra, y se transforman en normales según la figura \ref{fig:gtheta}, reemplazando la razón de tarifas por un valor aleatorio $(0,1)$ lineal.\\
 
-Para ello se partirán de valores aleatorios \emph{lineales}, que pueden ser recuperados de una muestra, y transformarlos en normales según la figura \ref{fig:gtheta}, reemplazando la razón de tarifas por un valor aleatorio $(0,1)$ lineal.\\
+Todos estos valores aleatorios corresponden, por supuesto, con el número de pasajeros esperados para cada producto. Se sumarán los totales ingresados para comparación de las predicciones de ingreso.\footnote{Merece la pena dar cuenta del objetivo el algoritmo EMSR-b; busca que los niveles de ocupación, desde la clase más alta, sean lo más cercano posibles a la media de demanda. Esto ocurre cuando hay suficientes asientos. Realizando la simulación de Monte Carlo para llenar el tren con los niveles de protección adecuados y con suficientes asientos, la media de ocupación para cada clase está muy cerca de la media de demanda esperada.}\\
 
-Todos estos valores aleatorios corresponden, por supuesto, con el número de pasajeros esperados para cada producto. Se sumarán los totales ingresados para comparación de las predicciones de ingreso.
+Habiendo realizado las pertinentes simulaciones, para distintas demandas, conceptos, costes etc. resulta que el ingreso es subóptimo.\footnote{Al llenar el tren según el algoritmo EMSR-b designa \cite{wiki:emsr}, no quedan protegidos suficientes asientos sobre todo si no están disponibles en lo que respecta al número de vagones. Queda claro que el número de vagones que se configuran sí influye en los niveles de protección, contrario a lo esperado anteriormente; esta relación indirecta proviene del el nivel de ocuación del tren (lo que influye en el coste por asiento), el cual depende de la demanda y como tal, del número de vagones.\label{fot:np}} La principal razón para tal es que las tarifas y los costes se añaden por separado, y el algoritmo EMSR-b es ciego a estos costes (ver tabla \ref{tab:vag}).\\
 
+Esta discrepancia es crítica cuando el número total de asientos disponibles es inferior a la demanda media esperada como se discute en \ref{fot:np}. Para arreglar este error, en vez de considerar las tarifas de cada producto (\emph{de cara al público}), el algoritmo EMSR-b deberá considerar los ingresos para cada producto. Los potenciales errores que pueden surgir están relacionados con una razón de tarifas negativa\footnote{Sea la tarifa de un producto suficientemente baja, tal que sumando los costes, el ingreso resulta negativo. En tal caso, la recomendación para la compañía sería que retirasen o modificasen tal producto.} lo cual propiciaría resolver para un valor que se encuentra fuera del recorrido de la función CDF, véase la figura \ref{fig:gtheta}.\\
 
+Correspondientemente, las funciones $\gamma$ y $\delta$ también portan error. Estas funciones no toman en cuenta la manera descrita y esperada por el algoritmo EMSR-b de llenar el tren.\footnote{En la sección del cálculo de vagones se asume que el tren se llena primero desde las clases más altas a las más bajas; y se designan los puntos de tope los valores de protección, lo cual no es siempre el caso.} Los ingresos que determinan las funciones son subóptimos; las normas descritas para decidir el número de vagones pueden aplicar en algunos casos, pero necesitan ser remodeladas.
 
 
 
