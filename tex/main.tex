@@ -801,13 +801,13 @@ width=18cm,height=8cm,
 legend pos=north east,
 grid=none,
 ]
-\addplot [red, ultra thick, domain=0:200] {1};
-\addplot [red, ultra thick] table{data/vprob0.dat};
+\addplot [ForestGreen, ultra thick, domain=0:200] {1};
+\addplot [ForestGreen, ultra thick] table{data/vprob0.dat};
 % \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
 
-\addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
+\addplot [red, densely dashdotted, ultra thick] table{data/vprob3.dat};
 
-\addplot [ForestGreen, densely dashdotted, ultra thick] table{data/vprob6.dat};
+\addplot [yellow, densely dashdotted, ultra thick] table{data/vprob6.dat};
 
 
 
@@ -900,13 +900,13 @@ width=18cm,height=8cm,
 legend pos=north east,
 grid=none,
 ]
-\addplot [red, ultra thick, domain=0:200] {1};
-\addplot [red, ultra thick] table{data/vprob0.dat};
+\addplot [ForestGreen, ultra thick, domain=0:200] {1};
+\addplot [ForestGreen, ultra thick] table{data/vprob0.dat};
 % \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
 
 % \addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
 
-\addplot [ForestGreen, densely dashdotted, ultra thick] table{data/vprob6.dat};
+\addplot [yellow, densely dashdotted, ultra thick] table{data/vprob6.dat};
 
 
 
@@ -953,6 +953,225 @@ Habiendo realizado las pertinentes simulaciones, para distintas demandas, concep
 Esta discrepancia es crítica cuando el número total de asientos disponibles es inferior a la demanda media esperada como se discute en \ref{fot:np}. Para arreglar este error, en vez de considerar las tarifas de cada producto (\emph{de cara al público}), el algoritmo EMSR-b deberá considerar los ingresos para cada producto. Los potenciales errores que pueden surgir están relacionados con una razón de tarifas negativa\footnote{Sea la tarifa de un producto suficientemente baja, tal que sumando los costes, el ingreso resulta negativo. En tal caso, la recomendación para la compañía sería que retirasen o modificasen tal producto.} lo cual propiciaría resolver para un valor que se encuentra fuera del recorrido de la función CDF, véase la figura \ref{fig:gtheta}.\\
 
 Correspondientemente, las funciones $\gamma$ y $\delta$ también portan error. Estas funciones no toman en cuenta la manera descrita y esperada por el algoritmo EMSR-b de llenar el tren.\footnote{En la sección del cálculo de vagones se asume que el tren se llena primero desde las clases más altas a las más bajas; y se designan los puntos de tope los valores de protección, lo cual no es siempre el caso.} Los ingresos que determinan las funciones son subóptimos; las normas descritas para decidir el número de vagones pueden aplicar en algunos casos, pero necesitan ser remodeladas.
+
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = middle,
+% axis y line*=left,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$\gamma(\theta)$,
+% ymax=0.048,
+%ymin=5,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={80, 160, 240,320},
+    xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+%domain=3:20,
+%samples=200,
+width=16cm,height=7cm,
+legend pos=north west,
+cycle list name=black white,
+]
+
+
+
+
+\addplot+[legend image post style={line width=1pt}, mark=none, blue] table{data/fill1.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill2.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill3.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill4.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill5.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill6.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill7.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill8.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill9.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue, forget plot] table{data/fill10.dat};
+\addlegendentry{4};
+
+% \addplot+[legend image post style={line width=1pt}, mark=none, red] table{data/fill11.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill12.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill13.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill14.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill15.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill16.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill17.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill18.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill19.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, red, forget plot] table{data/fill20.dat};
+% \addlegendentry{3};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal] table{data/fill21.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill22.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill23.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill24.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill25.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill26.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill27.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill28.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill29.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal, forget plot] table{data/fill30.dat};
+% \addlegendentry{2};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet] table{data/fill31.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet, forget plot] table{data/fill32.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet, forget plot] table{data/fill33.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet, forget plot] table{data/fill34.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet, forget plot] table{data/fill35.dat};
+% \addlegendentry{1};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange] table{data/fill41.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill42.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill43.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill44.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill45.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill46.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill47.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill48.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill49.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, orange, forget plot] table{data/fill50.dat};
+% \addlegendentry{5};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen] table{data/fill51.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill52.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill53.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill54.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill55.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill56.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill57.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill58.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill59.dat};
+% \addplot+[legend image post style={line width=1pt}, mark=none, ForestGreen, forget plot] table{data/fill60.dat};
+% \addlegendentry{10};
+
+\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+
+\end{axis}
+
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos}\label{fig:mntcrl}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure}
+\centering
+
+\makebox[\textwidth]{
+\begin{tikzpicture}
+\begin{axis} [
+% title=Tabla,
+% axis lines = middle,
+axis y line*=left,
+axis x line*=bottom,
+legend style={nodes={scale=0.5, transform shape}},
+xlabel={$\theta$},
+ylabel=$\delta(\theta)$,
+% ymax=0.048,
+%ymin=5,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={9,94,183,211,289, 80, 160, 240,320},
+    xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+%domain=3:20,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=south west,
+]
+
+
+
+
+\addplot [blue, thick] table{data/vprob5.dat};
+\addlegendentry{$(1.5, 500)$}
+
+\addplot [violet, ultra thick] table{data/deltastar1.dat};
+\addplot [purple, thick] table{data/deltastar2.dat};
+\addplot [teal, thick] table{data/deltastar3.dat};
+\addplot [cyan, thick] table{data/deltastar4.dat};
+\addplot [olive, thick] table{data/deltastar5.dat};
+
+
+
+\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+
+\end{axis}
+
+\begin{axis} [
+% axis lines = left,
+axis y line*=right,
+axis x line*=top,
+legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+ylabel=$1 - P(\theta)$,
+% ymax=1.19,
+% ymin=0,
+% xmax=350,
+% xmin=0,
+% ticks=none,
+xtick={},
+    xticklabels={},
+% domain=0:400,
+%samples=200,
+width=18cm,height=8cm,
+legend pos=north east,
+grid=none,
+]
+
+% \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
+
+% \addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
+
+\addplot [red, densely dashdotted, ultra thick] table{data/acc1.dat};
+\addplot [orange, densely dashdotted, thick] table{data/acc2.dat};
+
+
+
+\end{axis}
+
+
+
+\end{tikzpicture}
+  }
+
+
+\caption{$\delta(\theta)$ según distintas tasas}
+\end{figure}
+
+
+
+
+
+
 
 
 

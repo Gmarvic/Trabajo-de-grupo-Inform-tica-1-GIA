@@ -41,6 +41,7 @@ contains
     real(8), intent(in) :: t, mu, sigma
     real(8) :: P, s
 
+    ! beware NaN
     call integralCDF(t, mu, sigma, 1000, s)
     P = 0.5 + s
   end function
@@ -182,8 +183,8 @@ contains
     v(filas) = 0.d0
   end subroutine
 
-
-  subroutine vagones(A, filas, v, array, n, prob)
+  ! revisión
+  subroutine vagones(A, filas, v, array, n, prob, tasavagon)
     implicit none
     integer, intent(in) :: n, filas
     ! TODO inout
@@ -191,45 +192,63 @@ contains
     real(8), intent(inout) :: array(n, 2), prob(n,2)
 
     integer :: nplazas
-    integer :: tasavagon
+    integer, intent(in) :: tasavagon
     real(8) :: tasapax
 
     integer :: i, clase
     real(8) :: s, temp
 
-
-    ! TODO
-    v(filas) = dble(321)
-
-
-    nplazas = 80
-    tasavagon = 0
-    tasapax = 0
-
+    s = 0.d0
     clase = 1
 
-    s = 0.d0
-
     do i = 1, n
+      if (i > A(clase, 5)) clase = clase + 1
+      s = s + (A(clase, 4)+A(clase, 1))*prob(i, 2)/2
 
-      if (i > v(clase)) clase = clase + 1
-
-      if (ceiling(i/dble(nplazas)) - ceiling((i-1)/dble(nplazas)) == 1) then
-        s = s - tasavagon
-      end if
-
-      temp = A(clase,1) - tasapax
-      !print*, temp
-      temp = temp*prob(i, 2)
-      !print*, temp
-      s = s + temp !A(clase, 1) - tasapax
+      ! print *, i, A(clase, 4)*prob(i, 2)
 
       array(i,1) = i
       array(i, 2) = s
-
-      !print *, i, s, clase
-
     end do
+
+
+    ! DEPRECATED AS PER MONTECARLO
+
+    !
+    ! ! TODO
+    ! v(filas) = dble(321)
+    !
+    !
+    ! nplazas = 80
+    !
+    ! tasapax = 0
+    !
+    ! clase = 1
+    !
+    ! s = 0.d0
+    !
+    ! do i = 1, n
+    !
+    !   if (i > v(clase)) clase = clase + 1
+    !
+    !   if (ceiling(i/dble(nplazas)) - ceiling((i-1)/dble(nplazas)) == 1) then
+    !     s = s - tasavagon
+    !   end if
+    !
+    !   ! temp = A(clase,4) - tasapax
+    !   ! !print*, temp
+    !   ! temp = temp*prob(i, 2)
+    !   !print*, temp
+    !   s = s + (A(clase, 4)+A(clase, 1))*prob(i, 2)/2 !A(clase, 1) - tasapax
+    !
+    !   array(i,1) = i
+    !   array(i, 2) = s
+    !
+    !   !print *, i, s, clase
+    !
+    ! end do
+
+
   end subroutine
 
   ! devuelve un valor normal, según el promedio, la desviación y el valor aleatorio lineal r, el cuál es devuelto como correspondiente
