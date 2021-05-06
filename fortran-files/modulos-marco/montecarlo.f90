@@ -173,9 +173,9 @@ program main
 
 
     ! monte carlo fill
-    open(nvagones+2, file = "fill"//trim(str(nvagones))//".dat", status = 'new')
+    open(nvagones+2, file = "s"//trim(str(nvagones))//".dat", status = 'new')
 
-    do l = 1 + (index - 1)*10, (index - 1)*10 + 10
+    do l = 1 + (index - 1)*50, (index - 1)*50 + 50
       pasajerostotal = 0.d0
       arrayA = 0.d0
       t = 1.0
@@ -195,11 +195,11 @@ program main
       end do
 
 
-      do i=1, int(pasajerostotal(l))
-        if (arrayA(i,1) > 0.d0) write(nvagones+2,*) arrayA(i,1), arrayA(i,2)
-      end do
-
-      write(nvagones+2,*) 
+      ! do i=1, int(pasajerostotal(l))
+      !   if (arrayA(i,1) > 0.d0) write(nvagones+2,*) arrayA(i,1), arrayA(i,2)
+      ! end do
+      write(nvagones+2,*) pasajerostotal(l), arrayA(int(pasajerostotal(l)),2)
+      write(nvagones+2,*)
     end do
     close(nvagones+2)
 

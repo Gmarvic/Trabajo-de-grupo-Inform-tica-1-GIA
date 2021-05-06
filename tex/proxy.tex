@@ -112,111 +112,361 @@ cycle list name=black white,
   }
 
 
-\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos $(1.5, 500)$}
+\caption{$(1.5, 500)$}
 \end{figure}
 
-
-
-
-
-
-
-
-
-
-
-\begin{figure}
-\centering
-
-\makebox[\textwidth]{
-\begin{tikzpicture}
-\begin{axis} [
-% title=Tabla,
-% axis lines = middle,
-axis y line*=left,
-axis x line*=bottom,
-legend style={nodes={scale=0.5, transform shape}},
-xlabel={$\theta$},
-ylabel=$\delta(\theta)$,
-% ymax=0.048,
-%ymin=5,
-% xmax=350,
-% xmin=0,
-% ticks=none,
-xtick={9,94,183,211,289, 80, 160, 240,320},
-    xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
-%domain=3:20,
-%samples=200,
-width=18cm,height=8cm,
-legend pos=south west,
-]
-
-
-
-
-\addplot [blue, thick] table{data/vprob5.dat};
-\addlegendentry{$(1.5, 500)$}
-
-\addplot [violet, ultra thick] table{data/deltastar1.dat};
-\addplot [purple, thick] table{data/deltastar2.dat};
-\addplot [teal, thick] table{data/deltastar3.dat};
-\addplot [cyan, thick] table{data/deltastar4.dat};
-\addplot [olive, thick] table{data/deltastar5.dat};
-
-
-
-\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
-\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
-\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
-\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
-
-\end{axis}
-
-\begin{axis} [
-% axis lines = left,
-axis y line*=right,
-axis x line*=top,
-legend style={nodes={scale=0.5, transform shape}},
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+% \begin{figure}
+% \centering
+%
+% \makebox[\textwidth]{
+% \begin{tikzpicture}
+% \begin{axis} [
+% % title=Tabla,
+% % axis lines = middle,
+% axis y line*=left,
+% axis x line*=bottom,
+% legend style={nodes={scale=0.5, transform shape}},
 % xlabel={$\theta$},
-ylabel=$1 - P(\theta)$,
-% ymax=1.19,
-% ymin=0,
-% xmax=350,
-% xmin=0,
-% ticks=none,
-xtick={},
-    xticklabels={},
-% domain=0:400,
-%samples=200,
-width=18cm,height=8cm,
-legend pos=north east,
-grid=none,
-]
-
-% \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
-
-% \addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
-
-\addplot [red, densely dashdotted, ultra thick] table{data/acc1.dat};
-\addplot [orange, densely dashdotted, thick] table{data/acc2.dat};
-
-
-
-\end{axis}
-
-
-
-\end{tikzpicture}
-  }
-
-
-\caption{$\delta(\theta)$ según distintas tasas}
-\end{figure}
-
-
-
-
-
+% ylabel=$\delta(\theta)$,
+% % ymax=0.048,
+% %ymin=5,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={9,94,183,211,289, 80, 160, 240,320},
+%     xticklabels={A, B, C, D, E*, {\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+% %domain=3:20,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=south west,
+% ]
+%
+%
+%
+%
+% \addplot [blue, thick] table{data/vprob5.dat};
+% \addlegendentry{$(1.5, 500)$}
+%
+% \addplot [violet, ultra thick] table{data/deltastar1.dat};
+% \addplot [purple, thick] table{data/deltastar2.dat};
+% \addplot [teal, thick] table{data/deltastar3.dat};
+% \addplot [cyan, thick] table{data/deltastar4.dat};
+% \addplot [olive, thick] table{data/deltastar5.dat};
+%
+%
+%
+% \addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+%
+% \end{axis}
+%
+% \begin{axis} [
+% % axis lines = left,
+% axis y line*=right,
+% axis x line*=top,
+% legend style={nodes={scale=0.5, transform shape}},
+% % xlabel={$\theta$},
+% ylabel=$1 - P(\theta)$,
+% % ymax=1.19,
+% % ymin=0,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={},
+%     xticklabels={},
+% % domain=0:400,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=north east,
+% grid=none,
+% ]
+%
+% % \addplot [ForestGreen, densely dashdotted, thick] table{data/vprob1.dat};
+%
+% % \addplot [yellow, densely dashdotted, ultra thick] table{data/vprob3.dat};
+%
+% \addplot [red, densely dashdotted, ultra thick] table{data/acc1.dat};
+% \addplot [orange, densely dashdotted, thick] table{data/acc2.dat};
+%
+%
+%
+% \end{axis}
+%
+%
+%
+% \end{tikzpicture}
+%   }
+%
+%
+% \caption{$\delta(\theta)$ según distintas tasas}
+% \end{figure}
+%
+%
+%
+%
+%
+%
+%
+% \begin{figure}
+% \centering
+%
+% \makebox[\textwidth]{
+% \begin{tikzpicture}
+% \begin{axis} [
+% % title=Tabla,
+% % axis lines = middle,
+% % axis y line*=left,
+% legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+% ylabel=$\gamma(\theta)$,
+% % ymax=0.048,
+% %ymin=5,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={80, 160, 240,320},
+%     xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+% %domain=3:20,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=north west,
+% cycle list name=black white,
+% ]
+%
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill1.dat};
+% \addlegendentry{1};
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill2.dat};
+% \addlegendentry{2};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill3.dat};
+% \addlegendentry{3};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill4.dat};
+% \addlegendentry{4};
+%
+%
+% \addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+%
+% \end{axis}
+%
+%
+%
+% \end{tikzpicture}
+%   }
+%
+%
+% \caption{$(1.5, 2000)$}
+% \end{figure}
+%
+%
+%
+%
+% \begin{figure}
+% \centering
+%
+% \makebox[\textwidth]{
+% \begin{tikzpicture}
+% \begin{axis} [
+% % title=Tabla,
+% % axis lines = middle,
+% % axis y line*=left,
+% legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+% ylabel=$\gamma(\theta)$,
+% % ymax=0.048,
+% %ymin=5,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={80, 160, 240,320},
+%     xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+% %domain=3:20,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=north west,
+% cycle list name=black white,
+% ]
+%
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill9.dat};
+% \addlegendentry{1};
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill10.dat};
+% \addlegendentry{2};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill11.dat};
+% \addlegendentry{3};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill12.dat};
+% \addlegendentry{4};
+%
+%
+% \addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+%
+% \end{axis}
+%
+%
+%
+% \end{tikzpicture}
+%   }
+%
+%
+% \caption{$(1.5, 5000)$}
+% \end{figure}
+%
+%
+%
+% \begin{figure}
+% \centering
+%
+% \makebox[\textwidth]{
+% \begin{tikzpicture}
+% \begin{axis} [
+% % title=Tabla,
+% % axis lines = middle,
+% % axis y line*=left,
+% legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+% ylabel=$\gamma(\theta)$,
+% % ymax=0.048,
+% %ymin=5,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={80, 160, 240,320},
+%     xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+% %domain=3:20,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=north west,
+% cycle list name=black white,
+% ]
+%
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill13.dat};
+% \addlegendentry{1};
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill14.dat};
+% \addlegendentry{2};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill15.dat};
+% \addlegendentry{3};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill16.dat};
+% \addlegendentry{4};
+%
+%
+% \addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+%
+% \end{axis}
+%
+%
+%
+% \end{tikzpicture}
+%   }
+%
+%
+% \caption{$(55,500)$}
+% \end{figure}
+%
+%
+%
+%
+% \begin{figure}
+% \centering
+%
+% \makebox[\textwidth]{
+% \begin{tikzpicture}
+% \begin{axis} [
+% % title=Tabla,
+% % axis lines = middle,
+% % axis y line*=left,
+% legend style={nodes={scale=0.5, transform shape}},
+% xlabel={$\theta$},
+% ylabel=$\gamma(\theta)$,
+% % ymax=0.048,
+% %ymin=5,
+% % xmax=350,
+% % xmin=0,
+% % ticks=none,
+% xtick={80, 160, 240,320},
+%     xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
+% %domain=3:20,
+% %samples=200,
+% width=18cm,height=8cm,
+% legend pos=north west,
+% cycle list name=black white,
+% ]
+%
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill17.dat};
+% \addlegendentry{1};
+%
+%
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill18.dat};
+% \addlegendentry{2};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill19.dat};
+% \addlegendentry{3};
+%
+% \addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill20.dat};
+% \addlegendentry{4};
+%
+%
+% \addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
+% \addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
+%
+% \end{axis}
+%
+%
+%
+% \end{tikzpicture}
+%   }
+%
+%
+% \caption{$(0,0)$}
+% \end{figure}
+%
 
 
 \begin{figure}
@@ -242,24 +492,19 @@ xtick={80, 160, 240,320},
 %samples=200,
 width=18cm,height=8cm,
 legend pos=north west,
-cycle list name=black white,
 ]
 
 
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill1.dat};
+\addplot+[blue] table{montecarlo/s1.dat};
 \addlegendentry{1};
 
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill2.dat};
+\addplot+[red] table{montecarlo/s2.dat};
 \addlegendentry{2};
 
-\addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill3.dat};
+\addplot+[teal] table{montecarlo/s3.dat};
 \addlegendentry{3};
 
-\addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill4.dat};
+\addplot+[violet] table{montecarlo/s4.dat};
 \addlegendentry{4};
 
 
@@ -276,196 +521,13 @@ cycle list name=black white,
   }
 
 
-\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos $(1.5, 2000)$}
+\caption{$(1.5, 500)$}
 \end{figure}
 
 
 
 
-\begin{figure}
-\centering
 
-\makebox[\textwidth]{
-\begin{tikzpicture}
-\begin{axis} [
-% title=Tabla,
-% axis lines = middle,
-% axis y line*=left,
-legend style={nodes={scale=0.5, transform shape}},
-xlabel={$\theta$},
-ylabel=$\gamma(\theta)$,
-% ymax=0.048,
-%ymin=5,
-% xmax=350,
-% xmin=0,
-% ticks=none,
-xtick={80, 160, 240,320},
-    xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
-%domain=3:20,
-%samples=200,
-width=18cm,height=8cm,
-legend pos=north west,
-cycle list name=black white,
-]
-
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill9.dat};
-\addlegendentry{1};
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill10.dat};
-\addlegendentry{2};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill11.dat};
-\addlegendentry{3};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill12.dat};
-\addlegendentry{4};
-
-
-\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
-\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
-\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
-\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
-
-\end{axis}
-
-
-
-\end{tikzpicture}
-  }
-
-
-\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos $(1.5, 5000)$}
-\end{figure}
-
-
-
-\begin{figure}
-\centering
-
-\makebox[\textwidth]{
-\begin{tikzpicture}
-\begin{axis} [
-% title=Tabla,
-% axis lines = middle,
-% axis y line*=left,
-legend style={nodes={scale=0.5, transform shape}},
-xlabel={$\theta$},
-ylabel=$\gamma(\theta)$,
-% ymax=0.048,
-%ymin=5,
-% xmax=350,
-% xmin=0,
-% ticks=none,
-xtick={80, 160, 240,320},
-    xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
-%domain=3:20,
-%samples=200,
-width=18cm,height=8cm,
-legend pos=north west,
-cycle list name=black white,
-]
-
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill13.dat};
-\addlegendentry{1};
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill14.dat};
-\addlegendentry{2};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill15.dat};
-\addlegendentry{3};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill16.dat};
-\addlegendentry{4};
-
-
-\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
-\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
-\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
-\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
-
-\end{axis}
-
-
-
-\end{tikzpicture}
-  }
-
-
-\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos $(55,500)$}
-\end{figure}
-
-
-
-
-\begin{figure}
-\centering
-
-\makebox[\textwidth]{
-\begin{tikzpicture}
-\begin{axis} [
-% title=Tabla,
-% axis lines = middle,
-% axis y line*=left,
-legend style={nodes={scale=0.5, transform shape}},
-xlabel={$\theta$},
-ylabel=$\gamma(\theta)$,
-% ymax=0.048,
-%ymin=5,
-% xmax=350,
-% xmin=0,
-% ticks=none,
-xtick={80, 160, 240,320},
-    xticklabels={{\tiny 1er}, {\tiny 2o}, {\tiny 3er}, {\tiny 4o vg. completo}},
-%domain=3:20,
-%samples=200,
-width=18cm,height=8cm,
-legend pos=north west,
-cycle list name=black white,
-]
-
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, blue] table{montecarlo/fill17.dat};
-\addlegendentry{1};
-
-
-
-\addplot+[legend image post style={line width=1pt}, mark=none, red] table{montecarlo/fill18.dat};
-\addlegendentry{2};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, teal] table{montecarlo/fill19.dat};
-\addlegendentry{3};
-
-\addplot+[legend image post style={line width=1pt}, mark=none, violet] table{montecarlo/fill20.dat};
-\addlegendentry{4};
-
-
-\addplot[densely dotted, darkgray] coordinates {(80,0) (80,25000)};
-\addplot[densely dotted, darkgray] coordinates {(160,0) (160,25000)};
-\addplot[densely dotted, darkgray] coordinates {(240,0) (240,25000)};
-\addplot[densely dotted, darkgray] coordinates {(320,0) (320,25000)};
-
-\end{axis}
-
-
-
-\end{tikzpicture}
-  }
-
-
-\caption{Simulaciones de Monte Carlo para $n$ vagones según los conceptos $(0,0)$}
-\end{figure}
 
 
 \end{document}
