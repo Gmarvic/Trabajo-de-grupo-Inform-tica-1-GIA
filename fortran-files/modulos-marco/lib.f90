@@ -283,6 +283,65 @@ contains
   end subroutine
 
 
+  ! la subrutina montecarlo llenará n trenes según Wik17, de las clases bajas a las altas aplicando los niveles de protección, v, con los valores de la tabla;
+  ! cada fila de q es un tren, con cada columna representando cada producto, y la cantidad siendo el número de pasajeros. dinero es un array de los ingresos para cada tren. nvagones son el número de vagones con los que el tren está configurado. tasas, y número de productos, clases.
+
+  ! toma valores aleatorios lineales de seed.dat. Son pseudo-aleatorios. Se pueden generar también con otros métodos; xn+1 = l*xn*(1-xn)
+
+  subroutine montecarlo(tabla, v, q, dinero, n, nvagones, tasavag, tasapax, clases)
+    implicit none
+
+    integer, intent(in) :: n, nvagones, tasavag, clases
+    real(8), intent(in) :: tasapax, tabla(clases, 6), v(clases)
+    real(8), intent(inout) :: q(n,clases), dinero(n)
+
+    integer :: i, j, k, libres, nplazas
+    real(8) :: t
+
+    nplazas = 80
+
+    open (2, file = 'seed.dat', status = 'old')
+    do i = 1, n
+      do j = 1, clases
+        read(2,*) q(i,j)
+      end do
+    end do
+    close(2)
+
+    do i = 1, n
+      do j = 1, clases
+        call randNormal(tabla(j, 2), tabla(j, 3), q(i,j))
+        if (q(i,j) < 0) q(i,j) = 0.d0
+      end do
+    end do
+
+    do i = 1, n
+      dinero(i) = 0.d0
+      libres = nvagones*nplazas
+
+      do j = clases, 1, -1
+        t = 0.d0
+        do k = j+1, clases
+          t = t + q(i, k)
+        end do
+
+        if (j == 1) then
+          libres = nvagones*nplazas - t
+        else
+          libres = nvagones*nplazas - v(j-1) - t
+        end if
+
+        if (q(i, j) > libres) then
+          q(i, j) = libres
+          if (libres < 0) q(i, j) = 0.d0
+        end if
+        dinero(i) = dinero(i) + q(i, j)*(tabla(j, 1))
+      end do
+    end do
+
+  end subroutine
+
+
 
 
 end module

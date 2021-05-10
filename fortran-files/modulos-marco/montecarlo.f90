@@ -6,9 +6,14 @@ program main
   real(8) :: factor, factorant
   real(8) ::  arrayA(320, 2), w, arrayB(320, 2)
   integer :: i, n, nvagones, tasavag, nplazas, j, clases, libres, k, l, index, limit
+
+  character(len=1) :: genfiles
+
   n = 200
   nplazas = 80
   clases = 5
+
+
 
   print *, "nvagones?"
   read *, limit
@@ -20,6 +25,12 @@ program main
 
   print *, "tasa vagon?"
   read *, tasavag
+
+
+  print *, "generar archivos? [y/n]"
+  read *, genfiles
+
+
 
   do index = 1, limit
 
@@ -52,49 +63,10 @@ program main
 
       call show_array(v,5, 1)
 
-
-      ! opening the file for reading
-      open (2, file = 'seed.dat', status = 'old')
-      do i = index, index + n
-        do j = 1, clases
-          read(2,*) q(i,j)
-        end do
-      end do
-      close(2)
+      call montecarlo(tabla, v, q, dinero, n, nvagones, tasavag, tasapax, clases)
 
 
       do i = 1, n
-        do j = 1, clases
-          call randNormal(tabla(j, 2), tabla(j, 3), q(i,j))
-          if (q(i,j) < 0) q(i,j) = 0.d0
-        end do
-      end do
-
-
-
-      do i = 1, n
-        dinero(i) = 0.d0
-        libres = nvagones*nplazas
-
-        do j = clases, 1, -1
-          t = 0.d0
-          do k = j+1, clases
-            t = t + q(i, k)
-          end do
-
-          if (j == 1) then
-            libres = nvagones*nplazas - t
-          else
-            libres = nvagones*nplazas - v(j-1) - t
-          end if
-
-          if (q(i, j) > libres) then
-            q(i, j) = libres
-            if (libres < 0) q(i, j) = 0.d0
-          end if
-          dinero(i) = dinero(i) + q(i, j)*(tabla(j, 1))
-        end do
-
         t = 0.d0
         do j = 1, clases
           t = t + q(i, j)
@@ -171,37 +143,40 @@ program main
 
 
 
+    if (genfiles == 'y') then
+      ! monte carlo fill
+      open(nvagones+2, file = "s"//trim(str(nvagones))//".dat", status = 'new')
 
-    ! monte carlo fill
-    open(nvagones+2, file = "s"//trim(str(nvagones))//".dat", status = 'new')
+      do l = 1 + (index - 1)*50, (index - 1)*50 + 50
+        pasajerostotal = 0.d0
+        arrayA = 0.d0
+        t = 1.0
+        w = 0.d0
+        do j = clases, 1, -1
+          if (q(l, j) > 1.0) then
+            do i = int(t), int(q(l, j) + t)
+              arrayA(i,1) = i
+              !incluir vagones implicitamente o a 80
+              arrayA(i, 2) = w + tabla(j, 1)
+              w = arrayA(i, 2)
+              ! print *, w
+              pasajerostotal(l) = i
+            end do
+            t = t + int(q(l,j))
+          end if
+        end do
 
-    do l = 1 + (index - 1)*50, (index - 1)*50 + 50
-      pasajerostotal = 0.d0
-      arrayA = 0.d0
-      t = 1.0
-      w = 0.d0
-      do j = clases, 1, -1
-        if (q(l, j) > 1.0) then
-          do i = int(t), int(q(l, j) + t)
-            arrayA(i,1) = i
-            !incluir vagones implicitamente o a 80
-            arrayA(i, 2) = w + tabla(j, 1)
-            w = arrayA(i, 2)
-            ! print *, w
-            pasajerostotal(l) = i
-          end do
-          t = t + int(q(l,j))
-        end if
+
+        ! do i=1, int(pasajerostotal(l))
+        !   if (arrayA(i,1) > 0.d0) write(nvagones+2,*) arrayA(i,1), arrayA(i,2)
+        ! end do
+        write(nvagones+2,*) pasajerostotal(l), arrayA(int(pasajerostotal(l)),2)
+        write(nvagones+2,*)
       end do
-
-
-      ! do i=1, int(pasajerostotal(l))
-      !   if (arrayA(i,1) > 0.d0) write(nvagones+2,*) arrayA(i,1), arrayA(i,2)
-      ! end do
-      write(nvagones+2,*) pasajerostotal(l), arrayA(int(pasajerostotal(l)),2)
-      write(nvagones+2,*)
-    end do
-    close(nvagones+2)
+      close(nvagones+2)
+    end if
 
   end do
+
+
 end program

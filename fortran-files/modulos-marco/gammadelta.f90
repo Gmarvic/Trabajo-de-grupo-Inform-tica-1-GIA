@@ -21,7 +21,7 @@ program main
   print *, "tasa vagon?"
   read *, tasavag
 
-  do index = 1, limit
+  do index = 1, 1
 
     nvagones = index
     factor = 1.0
@@ -153,11 +153,13 @@ program main
     end do
 
     ! DELTA
-    ! l = 4
-    v(:) = (/9, 94, 183, 211, 321/)
+    l = 1
+    ! v(:) = (/9, 94, 183, 211, 321/)
 
     do i = 1, 320
-      if (i > v(l)) l = l + 1
+      ! if (i > v(l)) l = l + 1
+      if (i > tabla(l, 5)) l = l + 1
+      if (l == 6) l = 5
       t = i
 
       arrayA(i, 1) = t
@@ -177,16 +179,16 @@ program main
 
 
     !
-    ! call vagones(tabla, 5, v, arrayB, 320, arrayA, tasavag)
+    call vagones(tabla, 5, v, arrayB, 320, arrayA, tasavag)
     !
     !
-    ! l = 1
-    ! open(10, file = 'acc2.dat', status = 'new')
-    ! do i = 1, 320
-    !   write(10,*) i, arrayA(i, 2)
-    !   l = l + 1
-    ! end do
-    ! close(1)
+    l = 1
+    open(10, file = 'deltastar6.dat', status = 'new')
+    do i = 1, 320
+      write(10,*) i, arrayB(i, 2)
+      l = l + 1
+    end do
+    close(10)
 
 
 
