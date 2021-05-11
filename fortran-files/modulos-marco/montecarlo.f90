@@ -110,6 +110,8 @@ program main
       if (abs(factor-factorant) < 0.0001) exit
     end do
 
+    arrayB = delta(tabla, 5, v, tasapax, tasavag, nplazas, nplazas*nvagones)
+
 
 
     ! DELTA
@@ -145,7 +147,7 @@ program main
 
     if (genfiles == 'y') then
       ! monte carlo fill
-      open(nvagones+2, file = "s"//trim(str(nvagones))//".dat", status = 'new')
+      open(nvagones+2, file = "s"//trim(str(nvagones))//".dat")
 
       do l = 1 + (index - 1)*50, (index - 1)*50 + 50
         pasajerostotal = 0.d0
@@ -178,5 +180,14 @@ program main
 
   end do
 
+  if (genfiles == 'y') then
+    open(50, file = "deltastar7.dat")
+
+    do i = 1, nplazas*nvagones
+      write(50,*) i, arrayB(i, 2)
+    end do
+
+    close(50)
+  end if
 
 end program
