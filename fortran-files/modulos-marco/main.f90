@@ -80,8 +80,10 @@ program main
 
 
   ! arrayA(1,2) = 0.92
+  ! DEPRECATED as per delta()
+  ! call vagones(A, 5, v, arrayB, 320, arrayA)
 
-  call vagones(A, 5, v, arrayB, 320, arrayA)
+  print *, delta(A, 5, v, dble(55), 500, 80, 320)
 
   !
   !
@@ -146,12 +148,12 @@ program main
 
 
 
-   open(1, file = 'delta4.dat', status = 'new')
-   do i=1,320
-      write(1,*) arrayB(i,1), arrayB(i,2)
-   end do
-
-   close(1)
+   ! open(1, file = 'deltastar8.dat')
+   ! do i=1,320
+   !    write(1,*) i, arrayB(i,2)
+   ! end do
+   !
+   ! close(1)
 
 
 end program
