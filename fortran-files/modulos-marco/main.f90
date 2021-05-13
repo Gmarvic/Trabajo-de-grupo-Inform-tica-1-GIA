@@ -4,6 +4,7 @@ program main
 
   real(8) :: A(5,6), v(5)
 
+  print *, "Algoritmo EMSR - b"
 
   A(1,:) = (/180, 14, 9, 0, 0, 0/)
   A(2,:) = (/130, 87, 8, 0, 0, 0/)
