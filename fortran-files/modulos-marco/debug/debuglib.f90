@@ -11,8 +11,8 @@ contains
     CHARACTER(LEN=80) :: String, fstring, temp
     integer :: i
 
-    String = "(A3,"//trim(str(n))//"F10.2, A3)"
-    fstring = "(A3,A"//trim(str(n*10))//", A3)"
+    String = "(A3,"//trim(str(n))//"F7.2, A3)"
+    fstring = "(A3,A"//trim(str(n*7))//", A3)"
 
     temp = ""
     do i = 1, n
