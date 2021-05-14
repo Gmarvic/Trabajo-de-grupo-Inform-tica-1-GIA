@@ -1,107 +1,106 @@
-Module utilidades
-
-contains
+module utilidades
+    contains
 !-------------------------------------------------------------------------------
 !Subrutinas para el cálculo del sistema no lineal:
 
 !Norma euclídea de un vector de dimensión n:
-  function norma_2(v,n) 
-         implicit none 
-         integer :: n, k 
-         real*8 :: v(n), norma_2, s 
-         s = 0d0 
-         do k = 1, n 
-          s = s + abs(v(k))**2 
-         end do 
-           norma_2 = sqrt(s) 
-  end function 
-  
+  function norma_2(v,n)
+         implicit none
+         integer :: n, k
+         real*8 :: v(n), norma_2, s
+         s = 0d0
+         do k = 1, n
+          s = s + abs(v(k))**2
+         end do
+           norma_2 = sqrt(s)
+  end function
+
 !Subrutina de cálculo de valores de las funciones del sistema:
-subroutine f(x,y,m) 
-       implicit none 
-       integer,intent(in) :: m 
-       real*8, intent(inout) :: x(m), y(m) 
+subroutine f(x,y,m)
+       implicit none
+       integer,intent(in) :: m
+       real*8, intent(inout) :: x(m), y(m)
        !Funciones del sistema:
-        y(1) = -(exp(x(1)/7)+2-x(2)) 
-        y(2) = -(0.1*x(1)**3-20*x(1)+20-x(2)) 
-end subroutine 
+        y(1) = -(exp(x(1)/7)+2-x(2))
+        y(2) = -(0.1*x(1)**3-20*x(1)+20-x(2))
+end subroutine
 
 !Subrutina con la Jacobiana calculada mediante diferencias finitas:
-subroutine jacob_f(x,a,m) 
-       implicit none  
-          integer,intent(in) :: m 
-          real*8,intent(inout) :: x(m), a(m,m) 
-          real*8 :: h=1d-6,z(m),y1(m),y2(m) 
-          ! valor de la función en la iteracción dada 
-          call f(x,y1,m) 
-          ! calculo parciales respecto a x1 
-           z(1)=x(1)+h 
-           z(2)=x(2) 
-           call f(z,y2,m) 
-           a(1,1) = (-y2(1)+y1(1))/h 
-           a(2,1) = (-y2(2)+y1(2))/h 
-          ! calculo parciales respecto a x2 
-           z(1)=x(1) 
-           z(2)=x(2)+h 
-           call f(z,y2,m) 
-           a(1,2) = (-y2(1)+y1(1))/h 
-           a(2,2) = (-y2(2)+y1(2))/h 
-       end subroutine 
-   
+subroutine jacob_f(x,a,m)
+       implicit none
+          integer,intent(in) :: m
+          real*8,intent(inout) :: x(m), a(m,m)
+          real*8 :: h=1d-6,z(m),y1(m),y2(m)
+          ! valor de la función en la iteracción dada
+          call f(x,y1,m)
+          ! calculo parciales respecto a x1
+           z(1)=x(1)+h
+           z(2)=x(2)
+           call f(z,y2,m)
+           a(1,1) = (-y2(1)+y1(1))/h
+           a(2,1) = (-y2(2)+y1(2))/h
+          ! calculo parciales respecto a x2
+           z(1)=x(1)
+           z(2)=x(2)+h
+           call f(z,y2,m)
+           a(1,2) = (-y2(1)+y1(1))/h
+           a(2,2) = (-y2(2)+y1(2))/h
+       end subroutine
+
 !subrutinas de LU:
 
 !factorización en lower y upper:
-subroutine factorizar (a,n) 
-       implicit none 
-       ! variables y argumentos 
-          integer :: k, i, h, j, n 
-          real*8 :: a(n,n), s 
-          !procedemos con la factorizacion 
-            do k = 1, n 
-               do i = k, n 
-                 s = 0 
-                 do h =1, k-1 
-                    s = s + a(i,h) * a(h,k) 
-                 end do 
-               a(i,k) = a(i,k) - s 
-               end do 
-               do j = k+1, n 
-                 s = 0 
-                 do h = 1, k-1 
-                   s = s + a(k,h) * a(h,j) 
-                 end do 
-                 a(k,j) = (1. / a(k,k)) * (a(k,j) - s) 
-               end do 
-            end do 
+subroutine factorizar (a,n)
+       implicit none
+       ! variables y argumentos
+          integer :: k, i, h, j, n
+          real*8 :: a(n,n), s
+          !procedemos con la factorizacion
+            do k = 1, n
+               do i = k, n
+                 s = 0
+                 do h =1, k-1
+                    s = s + a(i,h) * a(h,k)
+                 end do
+               a(i,k) = a(i,k) - s
+               end do
+               do j = k+1, n
+                 s = 0
+                 do h = 1, k-1
+                   s = s + a(k,h) * a(h,j)
+                 end do
+                 a(k,j) = (1. / a(k,k)) * (a(k,j) - s)
+               end do
+            end do
        end subroutine
-       
+
 !resolución del sistema:
-subroutine sustituir (a,b,n) 
-            implicit none 
-            ! variables  
-            integer :: n, k, h 
-            real*8 :: a(n,n), b(n), s 
+subroutine sustituir (a,b,n)
+            implicit none
+            ! variables
+            integer :: n, k, h
+            real*8 :: a(n,n), b(n), s
             ! resolución:
-              do k = 1, n 
-                 s = 0 
-                 do h = 1, k-1 
-                 s = s + a(k,h) * b(h) 
-                 end do 
-                 b(k) = (b(k) - s) / a(k,k) 
-              end do 
-              do k = n, 1, -1 
-                 s= 0 
-                 do h = k+1, n 
-                    s = s + a(k,h) * b(h) 
-                 end do 
-              b(k) = b(k) - s 
-              end do 
-      end subroutine 
+              do k = 1, n
+                 s = 0
+                 do h = 1, k-1
+                 s = s + a(k,h) * b(h)
+                 end do
+                 b(k) = (b(k) - s) / a(k,k)
+              end do
+              do k = n, 1, -1
+                 s= 0
+                 do h = k+1, n
+                    s = s + a(k,h) * b(h)
+                 end do
+              b(k) = b(k) - s
+              end do
+      end subroutine
 
 !-------------------------------------------------------------------------------
 !Subrutinas de cálculo de los EMSRS y el número de vagones:
 
-! Muestra matrices de reales (m,n) por pantalla
+    ! Muestra matrices de reales (m,n) por pantalla
   subroutine show_array(A, m, n)
     implicit none
     integer, intent(in) :: m, n
@@ -109,7 +108,7 @@ subroutine sustituir (a,b,n)
     CHARACTER(LEN=80) :: String, fstring, temp
     integer :: i
 
-    String = "(A3,"//trim(str(n))//"F10.2, A3)"
+    String = "(A3,"//trim(str(n))//"F10.5, A3)"
     fstring = "(A3,A"//trim(str(n*10))//", A3)"
 
     temp = ""
@@ -156,7 +155,7 @@ subroutine sustituir (a,b,n)
   end function
 
 
-  ! Según el método de (simpson)[DEPRECATED] trapecio se integra la probabilidad compuesta en función a mu y sigma
+  ! Según el método del trapecio se integra la probabilidad compuesta en función a mu y sigma
   ! Función de probabilidad acumulada, CDF
   ! límite de integración t, distribución(mu, sigma), número de intervalos n, solución s
   subroutine integralCDF(t,mu,sigma,n,s)
@@ -180,7 +179,7 @@ subroutine sustituir (a,b,n)
 
 
 
-  ! Esta subrutina calcula los valores emsr relevantes, según el algoritmo EMSR-b, desde y hacia la tabla A(filas, 6), ordenada descendentemente en función de las tarifas de las clases.
+  ! Esta subrutina calcula la demanda agregada, tarifa media ponderada y la desviación conjunta, según el algoritmo EMSR-b, desde y hacia la tabla A(filas, 6), ordenada descendentemente en función de las tarifas de las clases.
   ! La tabla A() se usará para calcular los niveles de protección para cada clase.
 
   subroutine valores_emsr(A, filas)
@@ -193,6 +192,7 @@ subroutine sustituir (a,b,n)
 
     do i = 1, filas
 
+      !Cálculo de la demanda agregada:
       s = 0.d0
       do k = 1, i
         s = s + A(k, 2)
@@ -200,15 +200,16 @@ subroutine sustituir (a,b,n)
 
       A(i,5) = s
 
+      !Cálculo de la tarifa media ponderada
       s = 0.d0
       do k = 1, i
-        ! TODO ingreso en vez de tarifa
         s = s + A(k, 1)*A(k, 2)
 
       end do
 
       A(i,4) = s/A(i,5)
 
+      !Cálculo de la desviación conjunta:
       s = 0.d0
       do k = 1, i
         s = s + A(k, 3)*A(k, 3)
@@ -286,6 +287,8 @@ subroutine sustituir (a,b,n)
     clase = 1
 
     do i = 1, n
+
+      !
       if (i > v(clase)) clase = clase + 1
       if (ceiling(i/dble(nplazas)) - ceiling((i-1)/dble(nplazas)) == 1) s = s - tasavag
 
@@ -336,5 +339,5 @@ subroutine sustituir (a,b,n)
     end do
 
   end subroutine
-
+ !------------------------------------------------------------------------------
 end module
