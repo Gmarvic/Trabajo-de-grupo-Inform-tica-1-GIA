@@ -9,7 +9,9 @@ integer, parameter :: m=2
 integer :: i, n, nmax=100
 real*8 :: x(m), b(m,m), y(m), errf, errx, eps=1d-3
 !Variables para el cálculo EMSR-b:
- real(8) :: A(5,6), v(5),  d(320,2)
+ real(8) :: A(5,6), v(5)
+ !Variables de cosas para Fernando
+ d(320,6), ca(5)
 !------------------------------------------------------------------
 !Resolución del sistema, promedio y desviacion clases A y D:
 !asigna valores iniciales aproximados gráficamente
@@ -71,5 +73,19 @@ real*8 :: x(m), b(m,m), y(m), errf, errx, eps=1d-3
   call show_array(v,5, 1)
 
   print *, "Vagones: ", delta(A, 5, v, dble(1.5), 500, 80, 320)
-  
+  print*,""
+
+  print*,"Plazas por clase:"
+  call asientos(v,5,a)
+  !Plazas en orden descendente de clase:
+  call show_array(v,5,1)
+
+!Cosas para Fernando:
+!---------------------------------------------------------------
+call EMSRsProbabilidad(A,5,320,d)
+call show_array(d,320,6)
+call clasificar(d,ca,320,5)
+print*,""
+print*,"Plazas por clase:"
+call show_array(ca,5,1)
 end program
