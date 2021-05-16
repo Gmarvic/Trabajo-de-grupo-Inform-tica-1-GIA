@@ -339,5 +339,124 @@ subroutine sustituir (a,b,n)
     end do
 
   end subroutine
- !------------------------------------------------------------------------------
+
+  !Calcula en número de plazas por clase, en base a las protecciones y al número de vagones.
+
+  subroutine asientos(v,n,a)
+    implicit none
+
+    integer,intent(in)::n
+    real*8,intent(inout)::v(n)
+    real*8,intent(in)::a(n,6)
+
+    integer::i=0,m, filas
+    real*8::s=0
+
+    filas=80*delta(A, 5, v, dble(1.5), 500, 80, 320)
+
+    do i=1,n
+        !Se redondea la protección al entero más alto
+        v(i)=int(v(i))+1
+        s=s+v(i)
+
+        if (s>=filas)then
+        v(i)=dble(filas)-s+v(i)
+        do m=i+1,n
+            v(m)=0d0
+        end do
+        exit
+        end if
+
+    end do
+
+  end subroutine
+
+!subrutinas de cosas para Fernando (solución probabilística):
+!--------------------------------------------------------------------
+subroutine EMSRsProbabilidad(A, filas, n, d)
+    implicit none
+
+    integer, intent(in) :: filas, n
+    real(8), intent(inout) :: d(n, 6)
+    real(8), intent(in) ::  A(filas, 6)
+
+    integer :: i,clase
+    real(8) :: s
+
+    s = 0.d0
+  do clase=1, 5
+    do i = 1, n
+      s = (A(clase, 4))*(1 - probabilidad(dble(i), A(clase,5), A(clase,6)))
+
+      d(i,1) = i
+      d(i, clase+1) = s
+    end do
+  end do
+
+  end subroutine
+
+  subroutine write_array(A, m, n)
+    implicit none
+    integer, intent(in) :: m, n
+    real(8), intent(in) :: A(m,n)
+    CHARACTER(LEN=80) :: String, fstring, temp
+    integer :: i
+
+    String = "(A3,"//trim(str(n))//"F10.5, A3)"
+    fstring = "(A3,A"//trim(str(n*10))//", A3)"
+
+    temp = ""
+    do i = 1, n
+      temp = temp//" "
+    end do
+
+    write(10, fstring) "_", temp,"_ "
+    do i = 1, m-1
+      write(10,String) "| ", A(i,:), "|"
+    end do
+    write(10,String) "|_", A(m,:), " _|"
+    print *,
+  end subroutine
+
+  !Clasifica los EMSRs para calcular probabilísticamente las protecciones
+subroutine clasificar(b,ca, filas, n)
+    implicit none
+    integer,intent(in)::filas, n
+    real*8,intent(in)::b(filas,6)
+    real*8,intent(inout):: ca(n)
+    integer*8:: clase, i
+    real*8::s
+    i=0
+    clase=1
+    s=0
+
+    do
+
+    if (clase-1>0) then
+        s=s+ca(clase-1)
+        if (s>=filas)then
+        ca(clase-1)=dble(filas)-s+ca(clase-1)
+        exit
+        end if
+    end if
+
+    if (s>=filas)then
+        ca(clase-1)=dble(filas)-s
+        exit
+    end if
+
+    clase=clase+1
+
+    do
+        i=i+1
+      if (b(i,clase)<b(i,clase+1))then
+        ca(clase-1)=i-1
+        exit
+      end if
+    end Do
+
+    end Do
+
+  end subroutine
+
 end module
