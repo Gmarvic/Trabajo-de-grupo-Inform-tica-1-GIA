@@ -936,6 +936,53 @@ N_{\text{vagones}} = \left\lceil\dfrac{\theta^*}{n_{\text{plazas}}}\right\rceil 
 
 
 
+\section{EMSRs}
+
+Se procede a calcular el número de plazas que se recomienda poner en venta inicialmente. Para ello, se procede al cálculo de los EMSRs asociados a  cada clase multiplicando las respectiva tarifas medias ponderadas por la probabilidad de vender un número determinado de asientos ($a$):
+\begin{align}
+\text{EMSR-b}(a) = \text{tmp}(n)\cdot \underset{(\overline{\mu}, \, \overline{\sigma})}{P(v \geq a)}
+\end{align}
+
+% EMSR-b (a)= tmp (n)xP(v>=a)(sigma)(mu)
+%
+Una vez calculados los valores se compararán en orden descendente de clase, esto es, desde aquellas con tarifas más altas (y con ello los mayores EMSRs) hasta las más bajas. Cuando los EMSRs comiencen a ser menores que la siguiente clase más alta EMSR($a$,$n$) $<$ EMSR($a$,$n+1$) se tomará el valor de $a$ (el número de plazas) que lo precede. Además, la suma del número de plazas verificará $\sum\text{plazas}(a,n) = \text{maxplazas}$ (para nuestro caso, maxplazas = 320). Así, se obtienen los siguientes valores:
+%
+% Clase:	Clase A	Clase B	Clase C	Clase D	Clase E
+% Plazas:	7	86	161	66	0
+
+
+\begin{table}[!htp]\centering
+
+%\small
+\begin{tabular}{lccccc}\toprule
+Clase &A &B &C &D &E \\\midrule
+Plazas &7 &86 &161 &66 &0 \\
+\bottomrule
+\end{tabular}
+
+\caption{Asignación de asientos}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \section{Monte Carlo}
