@@ -340,39 +340,9 @@ subroutine sustituir (a,b,n)
 
   end subroutine
 
-  !Calcula en número de plazas por clase, en base a las protecciones y al número de vagones.
+!Calcula los EMSRs en base a los parámetros de la matriz A, el número de clases (n) y el número de asientos (filas).
+!Guarda los resultados en el vector d:
 
-  subroutine asientos(v,n,a)
-    implicit none
-
-    integer,intent(in)::n
-    real*8,intent(inout)::v(n)
-    real*8,intent(in)::a(n,6)
-
-    integer::i=0,m, filas
-    real*8::s=0
-
-    filas=80*delta(A, 5, v, dble(1.5), 500, 80, 320)
-
-    do i=1,n
-        !Se redondea la protección al entero más alto
-        v(i)=int(v(i))+1
-        s=s+v(i)
-
-        if (s>=filas)then
-        v(i)=dble(filas)-s+v(i)
-        do m=i+1,n
-            v(m)=0d0
-        end do
-        exit
-        end if
-
-    end do
-
-  end subroutine
-
-!subrutinas de cosas para Fernando (solución probabilística):
-!--------------------------------------------------------------------
 subroutine EMSRsProbabilidad(A, filas, n, d)
     implicit none
 
@@ -395,31 +365,10 @@ subroutine EMSRsProbabilidad(A, filas, n, d)
 
   end subroutine
 
-  subroutine write_array(A, m, n)
-    implicit none
-    integer, intent(in) :: m, n
-    real(8), intent(in) :: A(m,n)
-    CHARACTER(LEN=80) :: String, fstring, temp
-    integer :: i
+  !Clasifica los EMSRs para calcular el número de plazas por clase, guardados en ca
+  !Emplea la matriz de EMSRs (b), el número de asientos (filas) y el número  de clases (n) :
 
-    String = "(A3,"//trim(str(n))//"F10.5, A3)"
-    fstring = "(A3,A"//trim(str(n*10))//", A3)"
-
-    temp = ""
-    do i = 1, n
-      temp = temp//" "
-    end do
-
-    write(10, fstring) "_", temp,"_ "
-    do i = 1, m-1
-      write(10,String) "| ", A(i,:), "|"
-    end do
-    write(10,String) "|_", A(m,:), " _|"
-    print *,
-  end subroutine
-
-  !Clasifica los EMSRs para calcular probabilísticamente las protecciones
-subroutine clasificar(b,ca, filas, n)
+  subroutine clasificar(b,ca, filas, n)
     implicit none
     integer,intent(in)::filas, n
     real*8,intent(in)::b(filas,6)
@@ -432,6 +381,8 @@ subroutine clasificar(b,ca, filas, n)
 
     do
 
+    !Se comparan las clases desde aquella con tarifas mayores (mayor EMSR) hasta las más bajas:
+    ! Se limita el máximo de asientos:
     if (clase-1>0) then
         s=s+ca(clase-1)
         if (s>=filas)then
