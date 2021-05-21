@@ -1,0 +1,26 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+
+div {
+  margin: 0;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+}
+
+
+#sketchHolder {
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  position: relative;
+  width: 50%;
+
+
+}
