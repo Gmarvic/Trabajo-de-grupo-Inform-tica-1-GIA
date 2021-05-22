@@ -6,27 +6,291 @@
 
   <script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  tex: {
+    tags: 'ams'
+  };
+
 </script>
 <script type="text/javascript"
 src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
 </head>
 <body>
   <script src="sketch.js"></script>
 
+    <div class="">
+      <h2>Optimización comercial</h2>
+    </div>
+    <div class="">
+      <h3>Marco Aias et al.</h3>
+    </div>
+    <div class="">
+      <h3>17 de mayo de 2021</h3>
+    </div>
+
+    <br>
+
+    <ol>
+
+
+  <div class="">
+    <h1> <li>A realizar</li> </h1>
+
+    <p>Sea una cierta compañía de trenes de alta velocidad; la cual ofrece servicios de transporte entre distintas ciudades españolas, desde y hacia Madrid.</p>
+    <p>Sea el trayecto que nos compete Madrid-Bilbao, hemos de determinar la mejor manera de comercializar los asientos de tal tren según los distintos productos ofrecidos.</p>
+    <p>Consiste en determinar la cantidad de asientos esperados a ser vendidos para cada producto, con tal de que el total vendido sea óptimo. </p>
+    <p>Para tal se empleará un modelo de manejo de ingresos; ámpliamente usado, el algoritmo heurístico EMSR-b (Expected Marginal Seat Revenue).</p>
+    <p>Con tal información de demanda esperada para cada producto, se ha de determinar el número de vagones a configurar para el tren, atendiendo a las tasas implicadas.</p>
+  </div>
+
+
+  <div class="">
+    <h1><li>Productos</li></h1>
+
+    <table class="center">
+    <tr style="border-bottom: 1px solid #000; border-top: 1px solid #000;">
+        <td style="text-align: left">Clase de reserva</td>
+        <td>Tarifa [€]</td>
+        <td>Cambios permitidos</td>
+        <td>Sala Vip</td>
+        <td>Fast Track</td>
+        <td>Elección asiento</td>
+    </tr>
+
+    <tr>
+        <td style="text-align: left">A</td>
+        <td><input type="number" name="" value="180" id="pA"></td>
+        <td>Sí</td>
+        <td>Sí</td>
+        <td>Sí</td>
+        <td>Sí</td>
+    </tr>
+    <tr>
+        <td style="text-align: left">B</td>
+        <td><input type="number" name="" value="130" id="pB"></td>
+        <td>Solo 1 (penalización 25 €)</td>
+        <td>No</td>
+        <td>Sí</td>
+        <td>Sí</td>
+    </tr>
+    <tr>
+        <td style="text-align: left">C</td>
+        <td><input type="number" name="" value="100" id="pC"></td>
+        <td>Solo 1 (penalización 60 €)</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Sí</td>
+    </tr>
+    <tr>
+        <td style="text-align: left">D</td>
+        <td><input type="number" name="" value="80" id="pD"></td>
+        <td>No</td>
+        <td>No</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #000;">
+        <td style="text-align: left">E</td>
+        <td><input type="number" name="" value="40" id="pE"></td>
+        <td>No</td>
+        <td>No</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+
+    <caption style="text-align: center;">Tabla 1: Servicios y precio de cada clase</caption>
+</table>
+  </div>
+
+  <div class="">
+    <h1><li>Demanda</li></h1>
+
+    <p>Un departamento de <em>forecasting</em>  ha proyectado para un día en concreto la demanda esperada para cada producto. Ésta viene recogida en la tabla <a href="#tab:demanda">2</a>.</p>
+
+    <p>Se asume que la demanda para cada clase es independiente del resto; se asume la llegada de los clientes según la tarifa: primero se venden los asientos de la clase E, antes de ser vendidos aquellos con una tarifa más elevada.</p>
+
+    <table style="text-align: center;" class="center">
+    <tr style="border-bottom: 1px solid #000; border-top: 1px solid #000;">
+        <td style="text-align: left">Clase de reserva</td>
+        <td>$\mu$</td>
+        <td>$\sigma$</td>
+    </tr>
+    <tr>
+        <td style="text-align: left">A</td>
+        <td><mark>?</mark></td>
+        <td><mark>?</mark> </td>
+    </tr>
+    <tr>
+        <td style="text-align: left">B</td>
+        <td><input type="number" name="" value="87" id="muB"></td>
+        <td><input type="number" name="" value="8" id="sigmaB"></td>
+    </tr>
+    <tr>
+        <td style="text-align: left">C</td>
+        <td><input type="number" name="" value="89" id="muC"></td>
+        <td><input type="number" name="" value="9" id="sigmaC"></td>
+    </tr>
+    <tr>
+        <td style="text-align: left">D</td>
+        <td><mark>?</mark></td>
+        <td><mark>?</mark></td>
+    </tr>
+    <tr style="border-bottom: 1px solid #000;">
+        <td style="text-align: left">E</td>
+        <td><input type="number" name="" value="60" id="muE"></td>
+        <td><input type="number" name="" value="9" id="sigmaE"></td>
+    </tr>
+    <caption style="text-align: center; white-space: nowrap;">Tabla <a id="tab:demanda">2</a>: Proyección de demanda para cada clase</caption>
+</table>
+
+  <div class="">
+    $$\begin{align}
+    \sigma_1 &= e^{\mu / 7} + 2\tag{1}\label{eq:expbio}\\[8px]
+    \sigma_2 &= \dfrac{1}{10}\mu^{3} -20\mu + 20\label{eq:cubbio}\tag{2}
+    \end{align}$$
+  </div>
+
+  <p>La tabla <a href="#tab:demanda">2</a> y las ecuaciones $\eqref{eq:expbio}$ y $\eqref{eq:cubbio}$ corresponden al trayecto MAD - BIO; las ecuaciones aplican a las clases A y D.</p>
+
+  <p>Sea el espacio de la solución:</p>
+  $$\left\{5 \leq \mu \leq 35\right\}, \left\{1 \leq \sigma \leq 30\right\}$$
+
+
+      <!-- <iframe src="https://www.desmos.com/calculator/diznb9ohal?embed" width="500" height="500" style="border: 1px solid #ccc" frameborder=0></iframe> -->
+  </div>
+
+  <div class="">
+    <h1><li>Probabilidad EMSR</li> </h1>
+
+    <p>Para el cálculo de los EMSR(s), se requiere conocer la probabilidad de demanda; para lo cual el modelo toma los datos de demanda proyectados en la tabla 2 y forma una distribución normal de probabilidades.</p>
+
+    <p>La distribución gaussiana:</p>
+
+    $$
+    \begin{align}
+    f(x) &= \dfrac{1}{\sigma\sqrt{2\pi}}\exp\left({-\,\dfrac{1}{2}\left(\dfrac{x-\mu}{\sigma}\right)^2}\right) \label{eq:fgauss}\tag{3} \\[8pt]
+    P(t) &= \int_{-\infty}^{t} f(x) \text{d} x \underset{t\to +\infty}{=} 1 \label{eq:intgauss}\tag{4}
+    \end{align}
+    $$
+
+
+    <p>La integral $\eqref{eq:intgauss}$ no se puede resolver de forma analítica, sino por aproximación por el método del trapecio y también por el método de Simpson.</p>
+
+    <p>Dado que la función $\eqref{eq:fgauss}$ es simétrica, la integral $\underset{t = \mu}{\text{\eqref{eq:intgauss}}}$ es igual a $\frac{1}{2}$. Entonces no es necesario calcular entre $(-\infty, t)$, sino $\frac{1}{2} + \int_\mu^t f(x)\text{d} x$ lo que alivia muchos recursos computacionales.</p>
+
+    $$
+    \begin{align}
+    P(t) = \dfrac{1}{2} + \int_\mu^t \underset{(\mu, \, \sigma)}{f(x)}\text{d} x \label{eq:probgauss}\tag{5}
+    \end{align}
+    $$
+
+  </div>
+
+
+  <div class="">
+    <h1><li>Algoritmo EMSR-b</li></h1>
+
+    <p>Consiste en proteger suficientes <i>asientos</i> de respectivas clases con tal de maximizar el ingreso total.</p>
+
+    <p>Se basa en la <em>Regla de Littlewood</em>: </p>
+
+    <q cite="">
+      La razón entre las tarifas de respectivas clases ha de ser igual a la probabilidad de ser ocupado el asiento de la clase de la tarifa superior
+    </q>
+
+    <p>Ha de encontrarse el número de asientos protegidos ($t$) que satisfaga la probabilidad ($P(t)$) $\eqref{eq:probgauss}$ de ser ocupados requerida por la razón de las respectivas tarifas.</p>
+
+    <p>Ampliamos la tabla <a href="#tab:demanda">2</a> para calcular los parámetros relativos a los EMSR(s); <a href="#">[][]</a> </p>
+
+    <table class="center">
+    <tr style="border-bottom: 1px solid #000; border-top: 1px solid #000;">
+        <td style="text-align: left">Clase$_i$</td>
+        <td>Tarifa$_i$</td>
+        <td>$\mu_i$</td>
+        <td>$\sigma_i$</td>
+        <td>tmp$_i$</td>
+        <td>$\overline{\mu}_i$ </td>
+        <td>$\overline{\sigma}_i$</td>
+        <td>Protección</td>
+    </tr>
+
+  </table>
+
+  <p>Según el algoritmo EMSR-b se comparan las clases en orden ascendente de precio. Se aplica la regla de Littlewood entre una clase y el resto cuál sea de mayor tarifa.
+  i.e. la clase E ($i = 5$) se compara con el conjunto de las clases A, B, C y D; la clase C ($i = 3$) se compara con A y B etc.</p>
+
+  <p>Entonces se obtiene la tarifa media ponderada de un conjunto de clases como:</p>
+
+  $$
+  \begin{align}
+  \text{Tarifa media ponderada}_i \equiv \text{tmp}_i = \dfrac{\sum_{k=1}^{i} \text{tarifa}_k \cdot \mu_k}{\sum_{k=1}^{i} \mu_k} \tag{6}
+  \end{align}
+  $$
+
+  <p>Para el conjunto de demanda se agregan las demandas:</p>
+
+  $$
+  \begin{align}
+  \overline{\mu}_i = \sum_{k=1}^{i} \mu_k \tag{7}
+  \end{align}
+  $$
+
+  <p>Para la desviación conjunta se toma la raíz cuadrada del sumatorio de las varianzas:</p>
+
+
+  $$
+  \begin{align}
+  \overline{\sigma}_i = \sqrt{\sum_{k=1}^i \sigma_k^2} \tag{8}
+  \end{align}
+  $$
+
+  <p>Dados estos parámetros conjuntos, se procede a aplicar la regla de Littlewood entre cada clase y el conjunto restante.</p>
+
+  $$
+  \begin{align}
+  \dfrac{\text{tarifa}_{i + 1}}{\text{tmp}_i} =  \underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{P(x > \theta_i)} \tag{9}
+  \end{align}
+  $$
+
+  <p>Ha de encontrarse un valor $\theta_i$ para cada conjunto de clase, que representa el número de asientos protegidos, para el cuál la probabilidad de que tantos sean ocupados sea igual a la razón de tarifas.</p>
+
+  $$
+  \begin{align}
+  g(\theta) = \dfrac{1}{2} - \int_{\mu_i}^{\theta} \underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{f(x)}\text{d} x - \dfrac{\text{tarifa}_{i + 1}}{\text{tmp}_i}  = 0 \label{eq:gtheta} \tag{10}
+  \end{align}
+  $$
+
+  <div id="sketch-holder" class="center" style="">
+    <!-- Our sketch will go here! -->
+  </div>
+
+  <p>Se puede resolver por linealización, i.e. Newton.</p>
+
+  <p>Se resuelve para todos los valores EMSR y completa la tabla.</p>
+
+  </div>
+
+
+
+</ol>
+
   <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
 
 
-  <div id="sketch-holder" style="margin: auto">
-    <!-- Our sketch will go here! -->
-  </div>
+
 
   <!-- <h2>Math in TeX notation</h2>
 
   $$g(\theta) = \dfrac{1}{2} - \int_{\mu_i}^{\theta} \underset{(\overline{\mu}_i, \, \overline{\sigma}_i)}{f(x)}\text{d} x - \dfrac{\text{tarifa}_{i + 1}}{\text{tmp}_i}  = 0 \label{eq:gtheta}$$ -->
 
-<iframe src="main.pdf" frameBorder="0" style="width: 100%; height: 550px; border: 0" noScrollbars></iframe>
+<!-- <iframe src="main.pdf" frameBorder="0" style="width: 100%; height: 550px; border: 0" noScrollbars></iframe> -->
 
 
 </body></html>

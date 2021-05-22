@@ -1,26 +1,92 @@
 html, body {
-  margin: 0;
-  padding: 0;
+  margin: auto;
+  padding: auto;
 }
 canvas {
   display: block;
 }
 
-div {
-  margin: 0;
+
+/* div {
+  margin: 0 auto;
   display: flex;
 
   justify-content: center;
   align-items: center;
+} */
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
 }
 
+h1 {
+  margin-bottom: 1em;
+}
+
+div {
+  margin: 5%;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+input[type="number"] {
+
+   -webkit-appearance: none;
+  margin: 0;
+  width:40px;
+  border: 0;
+  text-align: center;
+}
+
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+td {
+  margin: 15%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+tr {
+  margin: 10%;
+  white-space: nowrap;
+
+}
+
+th {
+  white-space: nowrap;
+
+}
+
+table {
+  margin: 5%;
+  align-items: center;
+}
+
+tr>td {
+  padding-left: 1em;
+  /* margin: 15%; */
+}
 
 #sketchHolder {
   width: 600px;
   height: 400px;
-  margin: 0 auto;
-  position: relative;
-  width: 50%;
+  /* margin: 10%; */
+  /* margin: 100px; */
+  /* position: center; */
+  /* width: 50%; */
 
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
 
+}
+
+p {
+  text-indent: 2em;
 }
