@@ -16,6 +16,8 @@ let nit = 3;
 let nitslider;
 let cnv;
 
+let tabla = [];
+
 
 function setup() {
   cnv = createCanvas(600,400);
@@ -25,6 +27,8 @@ function setup() {
 
   cnv.changed(redraw);
 
+
+
   meanslider = createSlider(0, 320, 14);
   meanslider.position(cnv.position().x + width, cnv.position().y + 33);
   meanslider.parent('sketch-holder');
@@ -33,7 +37,7 @@ function setup() {
   sigmaslider.parent('sketch-holder');
   sigmaslider.position(cnv.position().x + width, cnv.position().y + 33 + 20);
 
-  ratioslider = createSlider(0,1,0.3, 0.01);
+  ratioslider = createSlider(0.001,0.999,0.3, 0.001);
   ratioslider.parent('sketch-holder');
   ratioslider.position(cnv.position().x + width, cnv.position().y + 33 + 20 + 20);
 
@@ -44,9 +48,48 @@ function setup() {
 
 
   noLoop();
+
+  for (let i = 0; i < 5; i++) {
+    tabla[i] = [];
+    for (let j = 0; j < 7; j++) {
+      tabla[i][j] = 0;
+    }
+  }
+
+  tabla[0][1] = 14;
+  tabla[3][1] = 14;
+  tabla[0][2] = 9;
+  tabla[3][2] = 9;
+
+  // console.log(probabilidad(1,0,1));
 }
 
 function draw() {
+
+  for (let i = 0; i < 5; i++) {
+    let s = "#p";
+    if (select(s + (i+1)) != null) tabla[i][0] = float(select(s + (i+1)).value());
+
+    s = "#mu";
+    if (select(s + (i+1)) != null) tabla[i][1] = float(select(s + (i+1)).value());
+
+    s = "#sigma";
+    if (select(s + (i+1)) != null) tabla[i][2] = float(select(s + (i+1)).value());
+  }
+
+
+  emsrb();
+  proteger();
+
+
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 7; j++) {
+      let s = "#A";
+
+      if (select(s + (i+1) + (j+1)) != null) select(s + (i+1) + (j+1)).html(round(tabla[i][j]));
+    }
+  }
+
 
   meanslider.position(cnv.position().x + width, cnv.position().y + 33);
 
@@ -114,7 +157,7 @@ function draw() {
     if (sigma == 0) {fx = 0};
 
 
-    vertex(i, scl*scl*fx);
+    vertex(i, -scl*scl*fx);
   }
 
   endShape();
@@ -171,6 +214,7 @@ function draw() {
   strokeWeight(2);
   stroke(255, 0, 0);
   line(-width, -scl*ratio, width, -scl*ratio);
+  line(xo, -height, xo, height);
 
   pop();
 
@@ -218,4 +262,75 @@ function mouseDragged() {
 
 function mouseReleased() {
   redraw();
+}
+
+function emsrb() {
+  for (let i = 0; i < 5; i++) {
+    let s = 0;
+    for (let k = 0; k < i+1; k++) {
+      s += tabla[k][1];
+    }
+    tabla[i][4] = s;
+
+    s = 0;
+    for (let k = 0; k < i+1; k++) {
+      s += tabla[k][0]*tabla[k][1];
+    }
+    tabla[i][3] = s/tabla[i][4];
+
+    s = 0;
+    for (let k = 0; k < i+1; k++) {
+      s += tabla[k][2]*tabla[k][2];
+    }
+    tabla[i][5] = sqrt(s);
+
+  }
+}
+
+function gauss(x, mu, sigma) {
+  let a = 1/sigma/sqrt(TWO_PI);
+  let b = exp(-0.5*pow(x/sigma - mu/sigma,2));
+
+  return a*b;
+}
+
+function integralCDF(t,mu,sigma,n) {
+
+  let h = (t-mu)/n;
+  let k = 0;
+  let x;
+
+  for (let i = 0; i < n-1; i++) {
+    x = mu + h*i;
+    k += gauss(x,mu,sigma);
+  }
+
+  return 0.5*h*(gauss(t,mu,sigma) + gauss(mu,mu,sigma) + 2*k);
+}
+
+function probabilidad(t, mu, sigma) {
+  let s = integralCDF(t, mu, sigma, 1000);
+
+  return s + 0.5;
+}
+
+function proteger() {
+  let tol = 0.000001;
+  let s;
+  for (let i = 0; i < 5-1; i++) {
+    let x = tabla[i][4];
+    for (let j = 0; j < 50; j++) {
+      s = tabla[i+1][0]/tabla[i][3] - 1 + probabilidad(x, tabla[i][4], tabla[i][5]);
+
+
+      if (abs(s) < tol) {
+        // console.log("i: ", i, "  j: ", j, "  s: ", s);
+        tabla[i][6] = x;
+        break;
+      }
+      let dx = -gauss(x, tabla[i][4], tabla[i][5]);
+      x = s/dx + x;
+    }
+    // tabla[i][6] = x;
+  }
 }

@@ -20,6 +20,15 @@ canvas {
   margin-right: auto;
 }
 
+.center h1 {
+  margin-left: 5em;
+}
+
+.center a {
+  color: #92c;
+}
+
+
 h1 {
   margin-bottom: 1em;
 }
@@ -69,6 +78,7 @@ table {
 }
 
 tr>td {
+  padding-right: 2em;
   padding-left: 1em;
   /* margin: 15%; */
 }
