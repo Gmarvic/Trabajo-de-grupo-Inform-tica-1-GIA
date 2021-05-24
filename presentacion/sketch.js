@@ -1,8 +1,13 @@
 
 
-let scalex = 1;
-let scaley = 1;
 let tabla = [];
+let nplazas = 80;
+let tasapax = 1.5;
+let tasavag = 500;
+
+let maxd = 0;
+let mind = 0;
+
 
 let s1 = function(sketch) {
 
@@ -350,13 +355,9 @@ new p5(s1);
 
 let s2 = function(q) {
 
-  let tasapax = 1.5;
-  let tasavag = 500;
-  let nplazas = 80;
   let d = [];
   let prob = [];
-  let maxd = 0;
-  let mind = 0;
+
 
   let nvagones;
 
@@ -553,3 +554,199 @@ let s2 = function(q) {
 };
 
 new p5(s2);
+
+
+let s3 = function(q) {
+
+  let cnv;
+  let p = [];
+  let trenes = [];
+  let d = [];
+
+  let alphafade = 2;
+
+  let centros = [];
+
+
+  let prevTP = tasapax;
+  let prevTV = tasavag;
+
+  q.setup = function() {
+    cnv = q.createCanvas(600, 300);
+
+    cnv.parent('monte-carlo');
+
+    for (let i = 0; i < 50; i++) {
+      p[i] = [];
+      for (let j = 0; j < 5; j++) {
+        p[i][j] = 0;
+      }
+    }
+
+    for (let i = 0; i < 50*4; i++) {
+      trenes[i] = [];
+      for (let j = 0; j < 4; j++) {
+        trenes[i][j] = [];
+        for (let k = 0; k < 2; k++) {
+          trenes[i][j][k] = 0;
+        }
+      }
+    }
+
+    centros[0] = q.createVector(0,0);
+    centros[1] = q.createVector(0,0);
+    centros[2] = q.createVector(0,0);
+    centros[3] = q.createVector(0,0);
+
+    // q.noLoop();
+    // q.frameRate(10);
+  }
+
+  q.draw = function() {
+    // mind = 0;
+    // maxd = 0;
+
+    // q.background(255);
+
+    if (tasapax != prevTP) q.background(255);
+    if (tasavag != prevTV) q.background(255);
+
+    if (q.frameCount % 1800 == 0) q.background(255);
+
+    q.stroke(0);
+    q.strokeWeight(1);
+    q.noFill();
+    q.rect(0,0,q.width, q.height);
+
+    let h = 20;
+    let nticks = q.int(q.width/h);
+    q.strokeWeight(0.05);
+    for (let i = 1; i < nticks; i++) {
+      q.line(i*h, 0, i*h, 5);
+      q.line(i*h, q.height, i*h, q.height - 5);
+    }
+
+    h = 20;
+    nticks = q.int(q.height/h);
+    q.strokeWeight(0.05);
+    for (let i = 1; i < nticks; i++) {
+      q.line(0, i*h, 5, i*h);
+      q.line(q.width, i*h, q.width - 5, i*h);
+    }
+
+    q.translate(q.width/10, 9*q.height/10);
+
+    for (let g = 0; g < 20; g++) {
+    montecarlo();
+
+    q.strokeWeight(1);
+    q.stroke(20, 50, 200, alphafade);
+    for (let i = 0; i < 50; i++) {
+      q.point(q.map(trenes[i][0][0], 0, nplazas*4, 0, q.width - q.width/6), -q.map(trenes[i][0][1], mind, maxd, 0, q.height - q.height/4));
+      centros[0].add(trenes[i][0][0], trenes[i][0][1]);
+    }
+
+    q.stroke(200, 50, 20, alphafade);
+    for (let i = 0; i < 50; i++) {
+      q.point(q.map(trenes[i][1][0], 0, nplazas*4, 0, q.width - q.width/6), -q.map(trenes[i][1][1], mind, maxd, 0, q.height - q.height/4));
+      centros[1].add(trenes[i][1][0], trenes[i][1][1]);
+    }
+
+    q.stroke(20, 180, 100, alphafade);
+    for (let i = 0; i < 50; i++) {
+      q.point(q.map(trenes[i][2][0], 0, nplazas*4, 0, q.width - q.width/6), -q.map(trenes[i][2][1], mind, maxd, 0, q.height - q.height/4));
+      centros[2].add(trenes[i][2][0], trenes[i][2][1]);
+
+    }
+
+    q.stroke(220, 150, 240, alphafade);
+    for (let i = 0; i < 50; i++) {
+      q.point(q.map(trenes[i][3][0], 0, nplazas*4, 0, q.width - q.width/6), -q.map(trenes[i][3][1], mind, maxd, 0, q.height - q.height/4));
+      centros[3].add(trenes[i][3][0], trenes[i][3][1]);
+    }
+    centros[0].mult(1/50);
+    centros[1].mult(1/50);
+    centros[2].mult(1/50);
+    centros[3].mult(1/50);
+    }
+
+
+
+    q.strokeWeight(1);
+    q.stroke(20, 50, 200, alphafade*10*5);
+    q.point(q.map(centros[0].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[0].y, mind, maxd, 0, q.height - q.height/4));
+
+    q.stroke(200, 50, 20, alphafade*10*5);
+    q.point(q.map(centros[1].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[1].y, mind, maxd, 0, q.height - q.height/4));
+
+    q.stroke(20, 180, 100, alphafade*10*5);
+    q.point(q.map(centros[2].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[2].y, mind, maxd, 0, q.height - q.height/4));
+
+    q.stroke(220, 150, 240, alphafade*10*5);
+    q.point(q.map(centros[3].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[3].y, mind, maxd, 0, q.height - q.height/4));
+
+
+    prevTP = tasapax;
+    prevTV = tasavag;
+
+    // if (q.frameCount > 120) q.noLoop();
+  }
+
+  function montecarlo() {
+    for (let index = 0 + 1; index < 4 + 1; index++) {
+      for (let i = 0; i < 50; i++) {
+        for (let j = 0; j < 5; j++) {
+          p[i][j] = (q.randomGaussian(tabla[j][1], tabla[j][2]));
+        }
+      }
+
+      let libres;
+      let t;
+      for (let i = 0; i < 50; i++) {
+        d[i] = 0;
+        libres = index*nplazas;
+
+        for (let j = 5-1; j >= 0; j--) {
+          t = 0;
+          for (let k = j + 1; k < 5; k++) {
+            t += p[i][k];
+          }
+
+          if (j == 0) {
+            libres = index*nplazas - t;
+          } else {
+            libres = index*nplazas - tabla[j-1][6] - t;
+          }
+
+          if (p[i][j] > libres) {
+            p[i][j] = libres;
+            if (libres < 0) p[i][j] = 0;
+          }
+
+          d[i] += p[i][j]*(tabla[j][0] - tasapax - tasavag/nplazas);
+        }
+      }
+
+      for (let i = 0; i < 50; i++) {
+        t = 0;
+        for (let j = 0; j < 5; j++) {
+          t += p[i][j];
+        }
+
+        trenes[i][index-1][0] = t;
+        trenes[i][index-1][1] = d[i];
+
+        if (d[i] > maxd) maxd = d[i];
+        if (d[i] < mind) mind = d[i];
+      }
+
+    }
+
+
+
+  }
+
+
+}
+
+new p5(s3);
