@@ -38,21 +38,13 @@ let s1 = function(sketch) {
 
 
 
-    meanslider = sketch.createSlider(0, 320, 14);
-    meanslider.position(cnv.position().x + sketch.width, cnv.position().y + 33);
-    meanslider.parent('sketch-holder');
+    meanslider = sketch.select("#is1mu");
 
-    sigmaslider = sketch.createSlider(0, 100, 50);
-    sigmaslider.parent('sketch-holder');
-    sigmaslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20);
+    sigmaslider = sketch.select("#is1sigma");
 
-    ratioslider = sketch.createSlider(0.001,0.999,0.3, 0.001);
-    ratioslider.parent('sketch-holder');
-    ratioslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20 + 20);
+    ratioslider = sketch.select("#is1frac");
 
-    nitslider = sketch.createSlider(0,10, 3);
-    nitslider.parent('sketch-holder');
-    nitslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20 + 20 + 20);
+    nitslider = sketch.select("#is1n");
 
 
 
@@ -100,13 +92,6 @@ let s1 = function(sketch) {
     }
 
 
-    meanslider.position(cnv.position().x + sketch.width, cnv.position().y + 33);
-
-    sigmaslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20);
-
-    ratioslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20 + 20);
-
-    nitslider.position(cnv.position().x + sketch.width, cnv.position().y + 33 + 20 + 20 + 20);
 
 
     // update values
@@ -115,6 +100,15 @@ let s1 = function(sketch) {
     sigma = sigmaslider.value();
     ratio = ratioslider.value();
     nit = nitslider.value();
+
+    sketch.select("#s1mu").html(mean);
+    sketch.select("#s1sigma").html(sigma);
+    sketch.select("#s1frac").html(ratio);
+    sketch.select("#s1n").html(nit);
+
+
+
+
 
     spectrum = sketch.constrain(sigma, 20,100)/3;
 
@@ -227,13 +221,14 @@ let s1 = function(sketch) {
 
     sketch.pop();
 
+    sketch.select("#s1theta").html(sketch.round(xo));
 
-
-    sketch.text("mu = " + mean, sketch.width - 100, 50);
-    sketch.text("sigma = " + sigma, sketch.width - 100, 70);
-    sketch.text("ratio = " + ratio, sketch.width - 100, 90);
-    sketch.text("n = " + nit, sketch.width - 100, 110);
-    sketch.text("theta = " + xo, sketch.width - 180, 130);
+    //
+    // sketch.text("mu = " + mean, sketch.width - 100, 50);
+    // sketch.text("sigma = " + sigma, sketch.width - 100, 70);
+    // sketch.text("ratio = " + ratio, sketch.width - 100, 90);
+    // sketch.text("n = " + nit, sketch.width - 100, 110);
+    // sketch.text("theta = " + xo, sketch.width - 180, 130);
 
     // stroke(0);
     // strokeWeight(1);
@@ -375,13 +370,9 @@ let s2 = function(q) {
 
     //
     //
-    tasapaxslider = q.createSlider(0, 100, 1.5, 0.5);
-    tasapaxslider.position(cnv.position().x + q.width, cnv.position().y + q.height/77);
-    tasapaxslider.parent('q-holder');
+    tasapaxslider = q.select("#is2tp");
     //
-    tasavagslider = q.createSlider(0, 5000, 500);
-    tasavagslider.parent('q-holder');
-    tasavagslider.position(cnv.position().x + q.width, cnv.position().y + q.height/77 + 20);
+    tasavagslider = q.select("#is2tv");
     //
 
     //
@@ -411,12 +402,12 @@ let s2 = function(q) {
     mind = 0;
     maxd = 0;
 
-    tasapaxslider.position(cnv.position().x + q.width, cnv.position().y + q.height/77);
-    tasapax = tasapaxslider.value();
 
-    tasavagslider.position(cnv.position().x + q.width, cnv.position().y + q.height/77 + 20);
+    tasapax = tasapaxslider.value();
     tasavag = tasavagslider.value();
 
+    q.select("#s2tp").html(tasapax);
+    q.select("#s2tv").html(tasavag);
 
     q.background(255);
 
@@ -473,15 +464,14 @@ let s2 = function(q) {
 
 
 
-    q.stroke(180);
+    q.stroke(100);
     q.strokeWeight(1);
     q.line(0, -q.height + q.height/4, q.width - q.width/6, -q.height + q.height/4);
-    q.text(q.round(maxd), -q.width/12, -q.height + q.height/4);
+    // q.text(q.round(maxd), -q.width/12, -q.height + q.height/4);
 
-    q.text("Tasa por pasajero: " + tasapax, q.width - q.width/3, -q.height + q.height/7);
-    q.text("Coste por vagón: " + tasavag, q.width - q.width/3, -q.height + q.height/7 + 20);
 
-    q.text("N vagones: " + nvagones, q.width/2.5, 0 + q.height/15);
+    q.select("#s2mx").html(q.round(maxd));
+    q.select("#s2nv").html(nvagones);
 
   }
 
@@ -684,6 +674,13 @@ let s3 = function(q) {
 
     q.stroke(220, 150, 240, alphafade*10*5);
     q.point(q.map(centros[3].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[3].y, mind, maxd, 0, q.height - q.height/4));
+
+    q.stroke(200, 200, 50, alphafade);
+    q.beginShape();
+    for (let j = 0; j < 4; j++) {
+      q.vertex(q.map(centros[j].x, 0, nplazas*4, 0, q.width - q.width/6), -q.map(centros[j].y, mind, maxd, 0, q.height - q.height/4));
+    }
+    q.endShape();
 
 
     prevTP = tasapax;
