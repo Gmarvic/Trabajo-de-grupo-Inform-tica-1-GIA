@@ -29,7 +29,7 @@ let s1 = function(sketch) {
   let cnv;
 
   sketch.setup = function() {
-    cnv = sketch.createCanvas(600,400);
+    cnv = sketch.createCanvas(600,300);
 
     // cnv.position(width/10,height/10);
     cnv.parent('sketch-holder');
@@ -361,7 +361,7 @@ let s2 = function(q) {
   let cnv;
 
   q.setup = function() {
-    cnv = q.createCanvas(600,400);
+    cnv = q.createCanvas(600,300);
 
     // cnv.position(width/10,height/10);
     cnv.parent('q-holder');
@@ -417,7 +417,26 @@ let s2 = function(q) {
 
     delta();
     q.stroke(0);
+    q.noFill();
     q.rect(0,0,q.width, q.height);
+
+
+    let h = 50;
+    let nticks = q.int(q.width/h);
+    q.strokeWeight(1);
+    for (let i = 1; i < nticks; i++) {
+      q.line(i*h, 0, i*h, 5);
+      q.line(i*h, q.height, i*h, q.height - 5);
+    }
+
+    h = 50;
+    nticks = q.int(q.height/h);
+    q.strokeWeight(1);
+    for (let i = 1; i < nticks; i++) {
+      q.line(0, i*h, 5, i*h);
+      q.line(q.width, i*h, q.width - 5, i*h);
+    }
+
     q.translate(q.width/10, 9*q.height/10);
 
     q.noFill();
@@ -608,7 +627,7 @@ let s3 = function(q) {
     q.noFill();
     q.rect(0,0,q.width, q.height);
 
-    let h = 20;
+    let h = 50;
     let nticks = q.int(q.width/h);
     q.strokeWeight(0.05);
     for (let i = 1; i < nticks; i++) {
@@ -616,7 +635,7 @@ let s3 = function(q) {
       q.line(i*h, q.height, i*h, q.height - 5);
     }
 
-    h = 20;
+    h = 50;
     nticks = q.int(q.height/h);
     q.strokeWeight(0.05);
     for (let i = 1; i < nticks; i++) {
@@ -624,9 +643,11 @@ let s3 = function(q) {
       q.line(q.width, i*h, q.width - 5, i*h);
     }
 
+    q.push();
+
     q.translate(q.width/10, 9*q.height/10);
 
-    for (let g = 0; g < 20; g++) {
+    for (let g = 0; g < 10; g++) {
     montecarlo();
 
     q.strokeWeight(1);
@@ -682,6 +703,8 @@ let s3 = function(q) {
     }
     q.endShape();
 
+    q.pop();
+
 
     prevTP = tasapax;
     prevTV = tasavag;
@@ -720,7 +743,13 @@ let s3 = function(q) {
             if (libres < 0) p[i][j] = 0;
           }
 
-          d[i] += p[i][j]*(tabla[j][0] - tasapax - tasavag/nplazas);
+          let factor = 1;
+          if (centros[index-1].x > 0) {
+            // factor = 1/(nplazas*index/centros[index-1].x);
+            factor = q.constrain(centros[index-1].x/(nplazas*index), 0, 1);
+          }
+
+          d[i] += p[i][j]*(tabla[j][0] - tasapax - tasavag/(nplazas*factor));
         }
       }
 
@@ -733,8 +762,44 @@ let s3 = function(q) {
         trenes[i][index-1][0] = t;
         trenes[i][index-1][1] = d[i];
 
-        if (d[i] > maxd) maxd = d[i];
-        if (d[i] < mind) mind = d[i];
+        if (q.abs(d[i])/q.abs(maxd) > 1.2) {
+          maxd = d[i];
+          q.background(255);
+          let h = 50;
+          let nticks = q.int(q.width/h);
+          q.strokeWeight(0.05);
+          for (let i = 1; i < nticks; i++) {
+            q.line(i*h, 0, i*h, 5);
+            q.line(i*h, q.height, i*h, q.height - 5);
+          }
+
+          h = 50;
+          nticks = q.int(q.height/h);
+          q.strokeWeight(0.05);
+          for (let i = 1; i < nticks; i++) {
+            q.line(0, i*h, 5, i*h);
+            q.line(q.width, i*h, q.width - 5, i*h);
+          }
+        }
+        if (q.abs(d[i])/q.abs(mind) < 0.9) {
+          mind = d[i];
+          q.background(255);
+          let h = 50;
+          let nticks = q.int(q.width/h);
+          q.strokeWeight(0.05);
+          for (let i = 1; i < nticks; i++) {
+            q.line(i*h, 0, i*h, 5);
+            q.line(i*h, q.height, i*h, q.height - 5);
+          }
+
+          h = 50;
+          nticks = q.int(q.height/h);
+          q.strokeWeight(0.05);
+          for (let i = 1; i < nticks; i++) {
+            q.line(0, i*h, 5, i*h);
+            q.line(q.width, i*h, q.width - 5, i*h);
+          }
+        }
       }
 
     }
