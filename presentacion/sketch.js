@@ -5,8 +5,7 @@ let nplazas = 80;
 let tasapax = 1.5;
 let tasavag = 500;
 
-let maxd = 0;
-let mind = 0;
+
 
 
 let s1 = function(sketch) {
@@ -353,6 +352,9 @@ let s2 = function(q) {
   let d = [];
   let prob = [];
 
+  let maxd = 0;
+  let mind = 0;
+
 
   let nvagones;
 
@@ -576,6 +578,9 @@ let s3 = function(q) {
 
   let centros = [];
 
+  let maxd = 0;
+  let mind = 0;
+
 
   let prevTP = tasapax;
   let prevTV = tasavag;
@@ -617,8 +622,17 @@ let s3 = function(q) {
 
     // q.background(255);
 
-    if (tasapax != prevTP) q.background(255);
-    if (tasavag != prevTV) q.background(255);
+    if (tasapax != prevTP) {
+      q.background(255);
+      mind = 0;
+      maxd = 0;
+    }
+
+    if (tasavag != prevTV) {
+      q.background(255);
+      mind = 0;
+      maxd = 0;
+    }
 
     if (q.frameCount % 1800 == 0) q.background(255);
 
@@ -762,7 +776,7 @@ let s3 = function(q) {
         trenes[i][index-1][0] = t;
         trenes[i][index-1][1] = d[i];
 
-        if (q.abs(d[i])/q.abs(maxd) > 1.2) {
+        if (q.abs(d[i])/q.abs(maxd) > 1.2 && d[i] > maxd) {
           maxd = d[i];
           q.background(255);
           let h = 50;
@@ -781,7 +795,7 @@ let s3 = function(q) {
             q.line(q.width, i*h, q.width - 5, i*h);
           }
         }
-        if (q.abs(d[i])/q.abs(mind) < 0.9) {
+        if (d[i] < mind) {
           mind = d[i];
           q.background(255);
           let h = 50;
