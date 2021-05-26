@@ -279,6 +279,7 @@ subroutine sustituir (a,b,n)
 
     maxvalue = 0.d0
 
+    ! maneja valores absurdos resultados de la subrutina proteger
     do i = 1, filas
       if (v(i) == 0.d0) v(i) = n
     end do
